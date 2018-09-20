@@ -1,10 +1,10 @@
 ﻿using System;
 namespace MAJServices.Services
 {
-    public class IUserInfoRepository
+    public interface IUserInfoRepository
     {
-        public IUserInfoRepository()
-        {
-        }
+        void AddUser();
+        void DeleteUser();
+        ICollection
     }
 }

@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{5A383D5B-E19F-449A-9128-22BFFE6E8D22}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MAJServices/Services/ICityInfoRepository.cs">
+    <Files>
+      <File FileName="MAJServices/Services/CityInfoRepository.cs" Line="21" Column="66" />
+      <File FileName="MAJServices/Services/ICityInfoRepository.cs" Line="12" Column="57" />
+      <File FileName="MAJServices/Services/IUserInfoRepository.cs" Line="8" Column="20" />
+      <File FileName="MAJServices/Entities/User.cs" Line="26" Column="27" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.MAJServices PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>
