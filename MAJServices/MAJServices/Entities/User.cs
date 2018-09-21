@@ -8,7 +8,7 @@ namespace MAJServices.Entities
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Required]
@@ -28,11 +28,11 @@ namespace MAJServices.Entities
        
         public string UserImageUrl { get; set; }
        
-        public ICollection<Post> UserPosts { get; set; } = new List<Post>();
+        public ICollection<Post> Posts { get; set; } = new List<Post>();
 
         [ForeignKey("DepartmentId")]
         public Department Department { get; set; }
         public string DepartmentId { get; set; }
     }
 }
-}
+
