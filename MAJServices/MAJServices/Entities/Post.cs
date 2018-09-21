@@ -12,6 +12,10 @@ namespace MAJServices.Entities
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(30)]
+        public string Title { get; set; }
+
+        [Required]
         [DataType(DataType.Date)]
         public DataType ReleaseDate { get; set; }
 
@@ -23,7 +27,7 @@ namespace MAJServices.Entities
         public DataType EndDate { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(200)]
         public string Description { get; set; }
 
         public ICollection<string> FileUrl { get; set; }

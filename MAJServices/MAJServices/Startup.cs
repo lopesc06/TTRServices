@@ -28,7 +28,7 @@ namespace MAJServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
+            var connectionString = @"Server=tcp:majdbserver.database.windows.net,1433;Initial Catalog=MAJDB;Persist Security Info=False;User ID=ArturoEscutia;Password=Lopesc_06;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ICityInfoRepository, CityInfoRepository>();
         }
@@ -54,7 +54,7 @@ namespace MAJServices
                 cfg.CreateMap<PointOfInterestForUpdateDto, PointOfInterest>();
                 cfg.CreateMap<PointOfInterest,PointOfInterestForUpdateDto>();
             });
-          
+
             app.UseMvc();
         }
     }
