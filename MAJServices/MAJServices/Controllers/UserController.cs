@@ -2,6 +2,7 @@
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -18,7 +19,7 @@ namespace MAJServices.Controllers
             _userInfoRepository = userInfoRepository;
         }
 
-        //Get all Users
+        //Get all Users with or without users' posts
         [HttpGet()]
         public ActionResult GetUsers(bool includePosts = false)
         {
@@ -31,7 +32,7 @@ namespace MAJServices.Controllers
             return Ok(result);
         }
 
-        //Get User
+        //Get User with or without user's posts
         [HttpGet("{id}" , Name = "GetUser")]
         public ActionResult GetUser(int id , bool includePosts = false)
         {
@@ -52,11 +53,11 @@ namespace MAJServices.Controllers
             return Ok(result);
         }
 
-
+        //add a new user 
         [HttpPost("adduser")]
-        public ActionResult AddUser( [FromBody]UserForCreationDto user)
+        public ActionResult AddUser( [FromBody]UserForCreationDto userDto)
         {
-            if(user == null)
+            if(userDto == null)
             {
                 return BadRequest();
             }
@@ -65,7 +66,7 @@ namespace MAJServices.Controllers
                 return BadRequest(ModelState);
             }
 
-            var CreateUser = Mapper.Map<User>(user);
+            var CreateUser = Mapper.Map<User>(userDto);
             _userInfoRepository.AddUser(CreateUser);
             if (!_userInfoRepository.Save())
             {
@@ -75,6 +76,79 @@ namespace MAJServices.Controllers
             return CreatedAtRoute("GetUser", new { id = CreateUser.Id }, CreatedUser);
         }
 
+        //Full update of user
+        [HttpPut("userupdate/{id}")]
+        public ActionResult UserUpdate ( int id , [FromBody]UserForUpdateDto userUpdate){
+            if(!_userInfoRepository.UserExist(id)){
+                return NotFound();
+            }
+            if(!ModelState.IsValid || userUpdate == null){
+                return BadRequest(ModelState);
+            }
+            var UserEntity = _userInfoRepository.GetUser(id,false);
+            if(UserEntity == null){
+                return NotFound();
+            }
+            Mapper.Map(userUpdate, UserEntity);
+            if(!_userInfoRepository.Save()){
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            return NoContent();
+        }
 
+        //Partial User Update
+        [HttpPatch("userupdate/{id}")]
+        public ActionResult PartialUserUpdate( int id , [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch){
+            if (!_userInfoRepository.UserExist(id))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid || userPatch == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var UserEntity = _userInfoRepository.GetUser(id, false);
+            if (UserEntity == null)
+            {
+                return NotFound();
+            }
+            var UserToPatch = Mapper.Map<UserForUpdateDto>(userPatch);
+            userPatch.ApplyTo(UserToPatch,ModelState);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            TryValidateModel(UserToPatch);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            Mapper.Map(UserToPatch, UserEntity);
+
+            if (!_userInfoRepository.Save())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            return NoContent();
+        }
+
+        //Delete User
+        [HttpDelete("{id}")]
+        public ActionResult DeleteUser(int id){
+            if(!_userInfoRepository.UserExist(id)){
+                return NotFound();
+            }
+            var UserEntity = _userInfoRepository.GetUser(id,false);
+            if(UserEntity == null){
+                return NotFound();
+            }
+            _userInfoRepository.DeleteUser(UserEntity);
+
+            if (!_userInfoRepository.Save())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            return NoContent();
+        }
     }
 }
