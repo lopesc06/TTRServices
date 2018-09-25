@@ -37,20 +37,19 @@ namespace MAJServices.Controllers
         public ActionResult GetUser(int id , bool includePosts = false)
         {
             var user = _userInfoRepository.GetUser(id, includePosts);
-            object result = null;
-
             if (user == null)
                 return NotFound();
-
             if (includePosts)
             {
-                result = Mapper.Map<UserDto>(user);
+                var result = Mapper.Map<UserDto>(user);
+                return Ok(result);
             }
             else
             {
-                result = Mapper.Map<UserWithoutPostsDto>(user);
+                var result = Mapper.Map<UserWithoutPostsDto>(user);
+                return Ok(result);
             }
-            return Ok(result);
+            
         }
 
         //add a new user 
@@ -68,7 +67,7 @@ namespace MAJServices.Controllers
 
             var CreateUser = Mapper.Map<User>(userDto);
             _userInfoRepository.AddUser(CreateUser);
-            if (!_userInfoRepository.Save())
+            if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
@@ -90,7 +89,7 @@ namespace MAJServices.Controllers
                 return NotFound();
             }
             Mapper.Map(userUpdate, UserEntity);
-            if(!_userInfoRepository.Save()){
+            if(!_userInfoRepository.SaveUser()){
                 return StatusCode(500, "A problem happened while handling your request");
             }
             return NoContent();
@@ -112,7 +111,7 @@ namespace MAJServices.Controllers
             {
                 return NotFound();
             }
-            var UserToPatch = Mapper.Map<UserForUpdateDto>(userPatch);
+            var UserToPatch = Mapper.Map<UserForUpdateDto>(UserEntity);
             userPatch.ApplyTo(UserToPatch,ModelState);
             if(!ModelState.IsValid)
             {
@@ -125,7 +124,7 @@ namespace MAJServices.Controllers
             }
             Mapper.Map(UserToPatch, UserEntity);
 
-            if (!_userInfoRepository.Save())
+            if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
@@ -144,7 +143,7 @@ namespace MAJServices.Controllers
             }
             _userInfoRepository.DeleteUser(UserEntity);
 
-            if (!_userInfoRepository.Save())
+            if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }

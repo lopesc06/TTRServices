@@ -11,8 +11,6 @@ namespace MAJServices.Services
         bool UserExist(int id);
         User GetUser(int Id, bool includePosts);
         IEnumerable<User> GetUsers(bool includePosts);
-        void AddUserPost(int id, Post post);
-        void DeleteUserPost(Post post);
-        bool Save();
+        bool SaveUser();
     }
 }

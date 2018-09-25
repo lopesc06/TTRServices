@@ -19,32 +19,21 @@ namespace MAJServices.Services
         {
             _infoContext.Users.Add(user);
         }
-
-        public void AddUserPost(int Id, Post post)
-        {
-            var user = GetUser(Id, false);
-            user.Posts.Add(post);
-        }
-
+        
         public void DeleteUser(User user)
         {
             _infoContext.Users.Remove(user);
         }
-
-        public void DeleteUserPost(Post post)
+        
+        public User GetUser(int id, bool includePosts)
         {
-            _infoContext.Posts.Remove(post);
-        }
-
-        public User GetUser(int Id, bool IncludePosts)
-        {
-            if (IncludePosts)
+            if (includePosts)
             {
-                return _infoContext.Users.Include( u => u.Posts).Where(u => u.Id == Id).FirstOrDefault();
+                return _infoContext.Users.Include(p=>p.Posts).Where(u => u.Id == id).FirstOrDefault();
             }
-            return _infoContext.Users.Where(u => u.Id == Id).FirstOrDefault();
+            return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
         }
-
+        
         public IEnumerable<User> GetUsers(bool IncludePosts)
         {
             if (IncludePosts)
@@ -54,7 +43,7 @@ namespace MAJServices.Services
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
         }
 
-        public bool Save()
+        public bool SaveUser()
         {
             return (_infoContext.SaveChanges() >= 0);
         }

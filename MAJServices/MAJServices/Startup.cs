@@ -32,12 +32,18 @@ namespace MAJServices
             var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
+            services.AddScoped<IPostInfoRepository, PostInfoRepository>();
             services.AddScoped<IDepartmentInfoRepository, DepartmentInfoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<InfoContext>();
+                context.Database.Migrate();
+            }
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -51,8 +57,13 @@ namespace MAJServices
             {
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<User, UserWithoutPostsDto>();
+                cfg.CreateMap<UserForUpdateDto, User>();
+                cfg.CreateMap<User, UserForUpdateDto>();
                 cfg.CreateMap<UserForCreationDto, User>();
                 cfg.CreateMap<User, UserWithoutPostsDto>();
+                cfg.CreateMap<PostForCreationDto, Post>();
+                cfg.CreateMap<Post, PostDto>();
+                cfg.CreateMap<Post, PostForCreationDto>();
             });
             app.UseMvc();
         }

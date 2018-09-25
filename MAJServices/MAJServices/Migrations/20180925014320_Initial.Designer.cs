@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAJServices.Migrations
 {
     [DbContext(typeof(InfoContext))]
-    [Migration("20180924040836_Initial")]
+    [Migration("20180925014320_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,11 +66,11 @@ namespace MAJServices.Migrations
                         .IsRequired()
                         .HasMaxLength(200);
 
-                    b.Property<int>("EndDate");
+                    b.Property<DateTime>("EndDate");
 
-                    b.Property<int>("ReleaseDate");
+                    b.Property<DateTime>("ReleaseDate");
 
-                    b.Property<int>("StartDate");
+                    b.Property<DateTime>("StartDate");
 
                     b.Property<string>("Title")
                         .IsRequired()

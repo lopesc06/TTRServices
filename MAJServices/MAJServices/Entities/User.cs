@@ -20,6 +20,7 @@ namespace MAJServices.Entities
         public string LastName { get; set; }
 
         [StringLength(35)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

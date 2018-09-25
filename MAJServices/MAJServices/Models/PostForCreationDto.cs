@@ -1,40 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MAJServices.Entities
+namespace MAJServices.Models
 {
-    public class Post
+    public class PostForCreationDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required]
         [MaxLength(30)]
         public string Title { get; set; }
 
         [Required]
-        [Column(TypeName = "Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
-
+        
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         [Required]
         [MaxLength(200)]
         public string Description { get; set; }
-
-        public ICollection<FilePath> FilePaths { get; set; }
-
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public int UserId { get; set; }
-
     }
 }

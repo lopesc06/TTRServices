@@ -34,7 +34,7 @@ namespace MAJServices.Services
         {
             return _infoContext.Departments.Any(dpt => dpt.Acronym == acronym);
         }
-
+//Revisar---------------------------------------------------------------------------------------------------------------
         public Department GetDepartment(string acronym, bool includeMembers, bool includePosts)
         {
             if( includeMembers && includePosts){
@@ -51,8 +51,8 @@ namespace MAJServices.Services
         {
             throw new NotImplementedException();
         }
-
-        public void Save()
+//Revisar---------------------------------------------------------------------------------------------------------------
+        public void SaveDpmt()
         {
             throw new NotImplementedException();
         }

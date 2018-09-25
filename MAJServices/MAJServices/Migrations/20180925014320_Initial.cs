@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MAJServices.Migrations
@@ -51,9 +52,9 @@ namespace MAJServices.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(maxLength: 30, nullable: false),
-                    ReleaseDate = table.Column<int>(nullable: false),
-                    StartDate = table.Column<int>(nullable: false),
-                    EndDate = table.Column<int>(nullable: false),
+                    ReleaseDate = table.Column<DateTime>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(maxLength: 200, nullable: false),
                     UserId = table.Column<int>(nullable: false)
                 },

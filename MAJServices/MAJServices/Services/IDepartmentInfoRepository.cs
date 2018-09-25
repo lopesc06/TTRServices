@@ -14,6 +14,6 @@ namespace MAJServices.Services
         void DeleteDepartment(Department department);
         void AddUserToDepartment(string acronym, User member);
         void DeleteMemberToDepartmen(User member);
-        void Save();
+        void SaveDpmt();
     }
 }
