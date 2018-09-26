@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MAJServices.Controllers 
 {
@@ -25,10 +26,19 @@ namespace MAJServices.Controllers
         {
             var users = _userInfoRepository.GetUsers(includePosts);
             IEnumerable result;
-            if(includePosts)
+            if (includePosts)
+            {
                 result = Mapper.Map<IEnumerable<UserDto>>(users);
+                foreach (UserDto r in result)
+                {
+                    var user = users.Where(u => u.Id == r.Id).FirstOrDefault();
+                    r.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
+                }
+            }
             else
+            {
                 result = Mapper.Map<IEnumerable<UserWithoutPostsDto>>(users);
+            }
             return Ok(result);
         }
 
@@ -42,6 +52,7 @@ namespace MAJServices.Controllers
             if (includePosts)
             {
                 var result = Mapper.Map<UserDto>(user);
+                result.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
                 return Ok(result);
             }
             else
@@ -49,7 +60,6 @@ namespace MAJServices.Controllers
                 var result = Mapper.Map<UserWithoutPostsDto>(user);
                 return Ok(result);
             }
-            
         }
 
         //add a new user 

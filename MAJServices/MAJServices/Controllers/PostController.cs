@@ -3,6 +3,7 @@ using AutoMapper;
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MAJServices.Controllers
@@ -73,6 +74,40 @@ namespace MAJServices.Controllers
                 return NotFound();
             }
             _postInfoRepository.DeleteUserPost(PostEntity);
+            if (!_postInfoRepository.SavePost())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            return NoContent();
+        }
+
+        [HttpPatch("{iduser}/post/{idpost}")]
+        public ActionResult PatchUserPost(int iduser , int idpost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
+        {
+            if (!_userInfoRepository.UserExist(iduser) || !_postInfoRepository.PostExist(idpost))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid || postPatch == null){
+                return BadRequest(ModelState);
+            }
+            var PostEntity = _postInfoRepository.GetUserPost(iduser, idpost);
+            if (PostEntity == null)
+            {
+                return NotFound();
+            }
+            var PostToPatch = Mapper.Map<PostForUpdateDto>(PostEntity);
+            postPatch.ApplyTo(PostToPatch, ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            TryValidateModel(PostToPatch);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            Mapper.Map(PostToPatch, PostEntity);
             if (!_postInfoRepository.SavePost())
             {
                 return StatusCode(500, "A problem happened while handling your request");

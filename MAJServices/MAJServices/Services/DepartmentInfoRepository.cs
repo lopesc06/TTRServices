@@ -25,7 +25,7 @@ namespace MAJServices.Services
             _infoContext.Departments.Remove(department);
         }
 
-        public void DeleteMemberToDepartmen(User member)
+        public void DeleteMemberToDepartment(User member)
         {
             _infoContext.Users.Remove(member);
         }
@@ -34,7 +34,7 @@ namespace MAJServices.Services
         {
             return _infoContext.Departments.Any(dpt => dpt.Acronym == acronym);
         }
-//Revisar---------------------------------------------------------------------------------------------------------------
+
         public Department GetDepartment(string acronym, bool includeMembers, bool includePosts)
         {
             if( includeMembers && includePosts){
@@ -51,7 +51,7 @@ namespace MAJServices.Services
         {
             throw new NotImplementedException();
         }
-//Revisar---------------------------------------------------------------------------------------------------------------
+
         public void SaveDpmt()
         {
             throw new NotImplementedException();

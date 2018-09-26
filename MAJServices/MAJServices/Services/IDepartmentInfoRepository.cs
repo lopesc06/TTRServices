@@ -13,7 +13,7 @@ namespace MAJServices.Services
         IEnumerable<Department> GetDepartments(bool includeMembers, bool includePosts);
         void DeleteDepartment(Department department);
         void AddUserToDepartment(string acronym, User member);
-        void DeleteMemberToDepartmen(User member);
+        void DeleteMemberToDepartment(User member);
         void SaveDpmt();
     }
 }

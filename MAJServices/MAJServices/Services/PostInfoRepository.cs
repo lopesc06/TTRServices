@@ -40,5 +40,9 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
+        public bool PostExist(int idPost)
+        {
+            return _infoContext.Posts.Any(p => p.Id == idPost);
+        }
     }
 }

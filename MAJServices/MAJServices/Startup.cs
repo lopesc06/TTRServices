@@ -64,6 +64,7 @@ namespace MAJServices
                 cfg.CreateMap<PostForCreationDto, Post>();
                 cfg.CreateMap<Post, PostDto>();
                 cfg.CreateMap<Post, PostForCreationDto>();
+                cfg.CreateMap<PostForUpdateDto, Post>();
             });
             app.UseMvc();
         }
