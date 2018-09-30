@@ -58,7 +58,7 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             var CreatedPost = Mapper.Map<PostDto>(CreatePost);
-            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatePost);
+            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatedPost);
         }
 
         [HttpDelete("{iduser}/post/{idpost}")]
