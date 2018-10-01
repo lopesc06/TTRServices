@@ -26,7 +26,11 @@ namespace MAJServices.Entities
         [Required]
         [StringLength(20)]
         public string Role { get; set; }
-       
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
         public string UserImageUrl { get; set; }
        
         public ICollection<Post> Posts { get; set; } = new List<Post>();
