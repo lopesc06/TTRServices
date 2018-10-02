@@ -24,18 +24,75 @@ namespace MAJServices.Controllers
     public class UserController : Controller
     {
         private IUserInfoRepository _userInfoRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public UserController(IUserInfoRepository userInfoRepository, UserManager<ApplicationUser> userManager
-            ,SignInManager<ApplicationUser> signInManager
+        public UserController(IUserInfoRepository userInfoRepository, UserManager<User> userManager
+            ,SignInManager<User> signInManager
             , IConfiguration configuration)
         {
             _userInfoRepository = userInfoRepository;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+        }
+
+
+//--------------Add a new user and return token--------------------------------------------//
+        [HttpPost("adduser")]
+        public async Task<IActionResult> AddUserAsync( [FromBody]UserForCreationDto userDto)
+        {
+            if(userDto == null)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var CreateUser = Mapper.Map<Entities.User>(userDto);
+            CreateUser.UserName = CreateUser.Name;
+            var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
+            if (result.Succeeded)
+            {
+                return BuildToken(CreateUser,userDto.Role);
+            }
+            else
+            {
+                return BadRequest("Username or password invalid");
+            }
+        }
+//-------------------------Build Token For User---------------------------------------//
+        private IActionResult BuildToken(User userInfo, string role)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
+                new Claim("Name",userInfo.Name),
+                new Claim("Role",role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave_secreta"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiration = DateTime.UtcNow.AddHours(1);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+               issuer: "yourdomain.com",
+               audience: "yourdomain.com",
+               claims: claims,
+               expires: expiration,
+               signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration
+            });
+
         }
 
 //-------------------Get all Users with or without users' posts------------------------------------------------//
@@ -63,8 +120,8 @@ namespace MAJServices.Controllers
 
 //----------------Get User with or without user's posts------------------------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("{id}" , Name = "GetUser")]
-        public ActionResult GetUser(int id , bool includePosts = false)
+        [HttpGet("{id}", Name = "GetUser")]
+        public ActionResult GetUser(string id, bool includePosts = false)
         {
             var user = _userInfoRepository.GetUser(id, includePosts);
             if (user == null)
@@ -81,135 +138,17 @@ namespace MAJServices.Controllers
                 return Ok(result);
             }
         }
-
-//--------------Add a new user and return token--------------------------------------------//
-        [HttpPost("adduser")]
-        public async Task<IActionResult> AddUserAsync( [FromBody]UserForCreationDto userDto)
+//-----------------------------------Delete User-----------------------------------//
+        [HttpDelete("{id}")]
+        public ActionResult DeleteUser(string id)
         {
-            if(userDto == null)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var CreateUser = Mapper.Map<User>(userDto);
-            _userInfoRepository.AddUser(CreateUser);
-            if (!_userInfoRepository.SaveUser())
-            {
-                return StatusCode(500, "A problem happened while handling your request");
-            }
-            var CreatedUser = Mapper.Map<UserWithoutPostsDto>(CreateUser);
-            var user = new ApplicationUser { Id = CreatedUser.Id.ToString() , UserName = CreatedUser.Id.ToString() };
-            var result = await _userManager.CreateAsync(user, CreatedUser.Password);
-            if (result.Succeeded)
-            {
-                return BuildToken(CreatedUser);
-            }
-            else
-            {
-                return BadRequest("Username or password invalid");
-            }
-            //return CreatedAtRoute("GetUser", new { id = CreateUser.Id }, CreatedUser);
-        }
-//-------------------------Build Token For User---------------------------------------//
-        private IActionResult BuildToken(UserWithoutPostsDto userInfo)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
-                new Claim("Name",userInfo.Name),
-                new Claim("Role",userInfo.Role),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave_secreta"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expiration = DateTime.UtcNow.AddHours(1);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-               issuer: "yourdomain.com",
-               audience: "yourdomain.com",
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
-
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration
-            });
-
-        }
-
-//-------------------------Full update of user---------------------------------------//
-        [HttpPut("userupdate/{id}")]
-        public ActionResult UserUpdate ( int id , [FromBody]UserForUpdateDto userUpdate){
-            if(!_userInfoRepository.UserExist(id)){
-                return NotFound();
-            }
-            if(!ModelState.IsValid || userUpdate == null){
-                return BadRequest(ModelState);
-            }
-            var UserEntity = _userInfoRepository.GetUser(id,false);
-            if(UserEntity == null){
-                return NotFound();
-            }
-            Mapper.Map(userUpdate, UserEntity);
-            if(!_userInfoRepository.SaveUser()){
-                return StatusCode(500, "A problem happened while handling your request");
-            }
-            return NoContent();
-        }
-
-//--------------------------Partial User Update----------------------------//
-        [HttpPatch("userupdate/{id}")]
-        public ActionResult PartialUserUpdate( int id , [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch){
             if (!_userInfoRepository.UserExist(id))
             {
                 return NotFound();
             }
-            if (!ModelState.IsValid || userPatch == null)
-            {
-                return BadRequest(ModelState);
-            }
             var UserEntity = _userInfoRepository.GetUser(id, false);
             if (UserEntity == null)
             {
-                return NotFound();
-            }
-            var UserToPatch = Mapper.Map<UserForUpdateDto>(UserEntity);
-            userPatch.ApplyTo(UserToPatch,ModelState);
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            TryValidateModel(UserToPatch);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            Mapper.Map(UserToPatch, UserEntity);
-
-            if (!_userInfoRepository.SaveUser())
-            {
-                return StatusCode(500, "A problem happened while handling your request");
-            }
-            return NoContent();
-        }
-
-//------------------Delete User-----------------------------------//
-        [HttpDelete("{id}")]
-        public ActionResult DeleteUser(int id){
-            if(!_userInfoRepository.UserExist(id)){
-                return NotFound();
-            }
-            var UserEntity = _userInfoRepository.GetUser(id,false);
-            if(UserEntity == null){
                 return NotFound();
             }
             _userInfoRepository.DeleteUser(UserEntity);
@@ -222,3 +161,4 @@ namespace MAJServices.Controllers
         }
     }
 }
+

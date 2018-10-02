@@ -25,7 +25,7 @@ namespace MAJServices.Services
             _infoContext.Users.Remove(user);
         }
         
-        public User GetUser(int id, bool includePosts)
+        public User GetUser(string id, bool includePosts)
         {
             if (includePosts)
             {
@@ -48,7 +48,7 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
-        public bool UserExist(int Id)
+        public bool UserExist(string Id)
         {
             return _infoContext.Users.Any(u => u.Id == Id);
         }

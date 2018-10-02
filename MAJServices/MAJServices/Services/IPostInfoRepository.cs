@@ -8,8 +8,8 @@ namespace MAJServices.Services
 {
     public interface IPostInfoRepository
     {
-        void AddUserPost(int id, Post post);
-        Post GetUserPost(int idUser, int idPost);
+        void AddUserPost(string id, Post post);
+        Post GetUserPost(string idUser, int idPost);
         void DeleteUserPost(Post post);
         bool PostExist(int idPost);
         bool SavePost();

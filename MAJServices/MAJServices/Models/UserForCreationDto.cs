@@ -10,7 +10,7 @@ namespace MAJServices.Models
     {
         [Required(ErrorMessage = "This field should not be empty")]
         [ConcurrencyCheck]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required(ErrorMessage = "This field should not be empty")]
         [ConcurrencyCheck]

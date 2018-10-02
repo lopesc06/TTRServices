@@ -34,7 +34,7 @@ namespace MAJServices
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
             services.AddScoped<IDepartmentInfoRepository, DepartmentInfoRepository>();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                  .AddEntityFrameworkStores<InfoContext>()
                  .AddDefaultTokenProviders();
 

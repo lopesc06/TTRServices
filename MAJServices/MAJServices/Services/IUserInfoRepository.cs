@@ -8,8 +8,8 @@ namespace MAJServices.Services
     {
         void AddUser(User user);
         void DeleteUser(User user);
-        bool UserExist(int id);
-        User GetUser(int Id, bool includePosts);
+        bool UserExist(string id);
+        User GetUser(string Id, bool includePosts);
         IEnumerable<User> GetUsers(bool includePosts);
         bool SaveUser();
     }

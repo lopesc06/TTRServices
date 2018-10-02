@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAJServices.Migrations
 {
     [DbContext(typeof(InfoContext))]
-    [Migration("20181002010202_IdentityTest")]
-    partial class IdentityTest
+    [Migration("20181002032711_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -77,7 +77,7 @@ namespace MAJServices.Migrations
                         .IsRequired()
                         .HasMaxLength(30);
 
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
@@ -88,39 +88,6 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("MAJServices.Entities.User", b =>
                 {
-                    b.Property<int>("Id");
-
-                    b.Property<string>("DepartmentId");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(35);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(40);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30);
-
-                    b.Property<string>("Password")
-                        .IsRequired();
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(20);
-
-                    b.Property<string>("UserImageUrl");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("MAJServices.Models.ApplicationUser", b =>
-                {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
@@ -129,14 +96,24 @@ namespace MAJServices.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<string>("DepartmentId");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(40);
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
@@ -150,16 +127,18 @@ namespace MAJServices.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<string>("Role");
-
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<string>("UserImageUrl");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -293,8 +272,7 @@ namespace MAJServices.Migrations
                 {
                     b.HasOne("MAJServices.Entities.User", "User")
                         .WithMany("Posts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("MAJServices.Entities.User", b =>
@@ -314,7 +292,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MAJServices.Models.ApplicationUser")
+                    b.HasOne("MAJServices.Entities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -322,7 +300,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MAJServices.Models.ApplicationUser")
+                    b.HasOne("MAJServices.Entities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -335,7 +313,7 @@ namespace MAJServices.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MAJServices.Models.ApplicationUser")
+                    b.HasOne("MAJServices.Entities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -343,7 +321,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MAJServices.Models.ApplicationUser")
+                    b.HasOne("MAJServices.Entities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

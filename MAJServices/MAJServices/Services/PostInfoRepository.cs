@@ -14,20 +14,21 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
 
-        public User GetUser(int id, bool includePosts)
+        public User GetUser(string id, bool includePosts)
         {
-            return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
+
+            return _infoContext.Users.Where(u => u.Id == id.ToString()).FirstOrDefault();
         }
 
-        public void AddUserPost(int id, Post post)
+        public void AddUserPost(string id, Post post)
         {
             var user = GetUser(id, false);
             user.Posts.Add(post);
         }
 
-        public Post GetUserPost(int idUser, int idPost)
+        public Post GetUserPost(string idUser, int idPost)
         {
-            return _infoContext.Posts.Where(p => p.UserId == idUser && p.Id == idPost).FirstOrDefault();
+            return _infoContext.Posts.Where(p => p.UserId == idUser.ToString() && p.Id == idPost).FirstOrDefault();
         }
 
         public void DeleteUserPost(Post post)
