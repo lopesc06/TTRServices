@@ -27,8 +27,8 @@ namespace MAJServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            //var connectionString = @"Server=tcp:majdbserver.database.windows.net,1433;Initial Catalog=MAJDB;Persist Security Info=False;User ID=ArturoEscutia;Password=Lopesc_06;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
+            //var connectionString = Configuration["AzureDBString"];
+            var connectionString = Configuration["LocalDBString"];
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
@@ -45,8 +45,8 @@ namespace MAJServices
                      ValidateAudience = true,
                      ValidateLifetime = true,
                      ValidateIssuerSigningKey = true,
-                     ValidIssuer = "yourdomain.com",
-                     ValidAudience = "yourdomain.com",
+                     ValidIssuer = Configuration["JwtIssuer"],
+                     ValidAudience = Configuration["JwtAudience"],
                      IssuerSigningKey = new SymmetricSecurityKey(
                          Encoding.UTF8.GetBytes(Configuration["Llave_secreta"])),
                      ClockSkew = TimeSpan.Zero

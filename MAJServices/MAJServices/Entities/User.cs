@@ -8,8 +8,7 @@ namespace MAJServices.Entities
 {
     public class User : IdentityUser
     {
-        public string Id { get; set; }
-
+        
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
