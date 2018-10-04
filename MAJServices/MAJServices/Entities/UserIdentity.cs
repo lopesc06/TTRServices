@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MAJServices.Entities
 {
-    public class User : IdentityUser
+    public class UserIdentity : IdentityUser
     {
         
         [Required]

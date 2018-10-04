@@ -30,14 +30,6 @@
 /Users/becario2/Desktop/TTR/TTRServices/MAJServices/MAJServices/obj/Debug/netcoreapp2.1/MAJServices.dll
 /Users/becario2/Desktop/TTR/TTRServices/MAJServices/MAJServices/obj/Debug/netcoreapp2.1/MAJServices.pdb
 /Users/becario2/Desktop/TTR/TTRServices/MAJServices/MAJServices/obj/Debug/netcoreapp2.1/MAJServices.csproj.CopyComplete
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csproj.CoreCompileInputs.cache
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cache
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cs
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfoInputs.cache
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfo.cs
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csprojAssemblyReference.cache
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.TagHelpers.input.cache
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.TagHelpers.output.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.deps.json
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.runtimeconfig.json
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.runtimeconfig.dev.json
@@ -45,6 +37,14 @@ C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\ne
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.pdb
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.Views.dll
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\netcoreapp2.1\MAJServices.Views.pdb
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csprojAssemblyReference.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csproj.CoreCompileInputs.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cs
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfoInputs.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfo.cs
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.TagHelpers.input.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.TagHelpers.output.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorCoreGenerate.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\Razor\Pages\About.g.cshtml.cs
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\Razor\Pages\Contact.g.cshtml.cs

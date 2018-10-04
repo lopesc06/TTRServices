@@ -32,7 +32,7 @@ namespace MAJServices.Controllers
 
 
 //-------------------Get all Users with or without users' posts------------------------------------------------//
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme , Policy = "ElevatedPrivilages")]
         [HttpGet()]
         public ActionResult GetUsers(bool includePosts = false)
         {
@@ -55,7 +55,7 @@ namespace MAJServices.Controllers
         }
 
 //----------------Get User with or without user's posts------------------------------------------------------//
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Policy = "LowPrivilages")]
         [HttpGet("{id}", Name = "GetUser")]
         public ActionResult GetUser(string id, bool includePosts = false)
         {

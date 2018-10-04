@@ -11,30 +11,32 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using MAJServices.Seeds;
 
 namespace MAJServices
 {
     public class Startup
     {
+
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
             //var connectionString = Configuration["AzureDBString"];
-            var connectionString = Configuration["LocalDBString"];
+            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
             services.AddScoped<IDepartmentInfoRepository, DepartmentInfoRepository>();
 
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<UserIdentity, RoleIdentity>()
                  .AddEntityFrameworkStores<InfoContext>()
                  .AddDefaultTokenProviders();
 
@@ -51,16 +53,21 @@ namespace MAJServices
                          Encoding.UTF8.GetBytes(Configuration["Llave_secreta"])),
                      ClockSkew = TimeSpan.Zero
                  });
+            services.AddAuthorization(options => {
+                options.AddPolicy("ElevatedPrivilages", policy => policy.RequireAuthenticatedUser().RequireRole("SuperAdmin", "Admin"));
+                options.AddPolicy("LowPrivilages", policy => policy.RequireAuthenticatedUser().RequireRole("Subadmin"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<UserIdentity> userManager, RoleManager<RoleIdentity> roleManager)
         {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetRequiredService<InfoContext>();
-                context.Database.Migrate();
-            }
+            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    var context = serviceScope.ServiceProvider.GetRequiredService<InfoContext>();
+            //    context.Database.Migrate();
+            //}
+            MyIdentityDataInitializer.SeedData(userManager, roleManager);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -73,12 +80,12 @@ namespace MAJServices
             app.UseAuthentication();
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<User, UserDto>();
-                cfg.CreateMap<User, UserWithoutPostsDto>();
-                cfg.CreateMap<UserForUpdateDto, User>();
-                cfg.CreateMap<User, UserForUpdateDto>();
-                cfg.CreateMap<UserForCreationDto, User>();
-                cfg.CreateMap<User, UserWithoutPostsDto>();
+                cfg.CreateMap<UserIdentity, UserDto>();
+                cfg.CreateMap<UserIdentity, UserWithoutPostsDto>();
+                cfg.CreateMap<UserForUpdateDto, UserIdentity>();
+                cfg.CreateMap<UserIdentity, UserForUpdateDto>();
+                cfg.CreateMap<UserForCreationDto, UserIdentity>();
+                cfg.CreateMap<UserIdentity, UserWithoutPostsDto>();
                 cfg.CreateMap<PostForCreationDto, Post>();
                 cfg.CreateMap<Post, PostDto>();
                 cfg.CreateMap<Post, PostForCreationDto>();

@@ -14,7 +14,7 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
 
-        public User GetUser(string id, bool includePosts)
+        public UserIdentity GetUser(string id, bool includePosts)
         {
 
             return _infoContext.Users.Where(u => u.Id == id.ToString()).FirstOrDefault();

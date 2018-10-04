@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,15 +19,17 @@ namespace MAJServices.Controllers
     [Route("api/users")]
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<UserIdentity> _userManager;
+        private readonly RoleManager<RoleIdentity> _roleManager;
+        private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IConfiguration configuration)
+        public AccountController(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager,
+            IConfiguration configuration, RoleManager<RoleIdentity> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             this._configuration = configuration;
         }
 
@@ -41,12 +45,15 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var CreateUser = Mapper.Map<Entities.User>(userDto);
+            var CreateUser = Mapper.Map<Entities.UserIdentity>(userDto);
             CreateUser.UserName = CreateUser.Id;
             var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
             if (result.Succeeded)
             {
-                return BuildToken(CreateUser, userDto.Role);
+                await AddUserRole(CreateUser, userDto.Role);
+                var UserResultDto = Mapper.Map<UserDto>(CreateUser);
+                return CreatedAtRoute("{idUser}", new { idUser = UserResultDto.Id}, UserResultDto);
+                //return BuildToken(CreateUser, userDto.Role);
             }
             else
             {
@@ -54,7 +61,7 @@ namespace MAJServices.Controllers
             }
         }
 //----------------------------------Build Token For User---------------------------------------//
-        private IActionResult BuildToken(User userInfo, string role)
+        private IActionResult BuildToken(UserIdentity userInfo, string role)
         {
             var claims = new[]
             {
@@ -85,6 +92,27 @@ namespace MAJServices.Controllers
             });
 
         }
+//--------------------------------Add User Role----------------------------------------------------------//
+        public async Task<IActionResult> AddUserRole(UserIdentity user, string role) {
+            bool RoleExists = await _roleManager.RoleExistsAsync(role);
+            if (!RoleExists)
+            {
+                return NotFound("Role Doesn't exists");
+            }
+            bool UserHasRole = await _userManager.IsInRoleAsync(user, role);
+            if (!UserHasRole)
+            {
+                var result = await _userManager.AddToRoleAsync(user, role);
+                if (result.Succeeded)
+                    return Ok();
+                else
+                    return StatusCode(500, "A problem happened while handling your request");
+            }
+            else
+            {
+                return StatusCode(409, "User already has that role assigned");
+            }
+        }
 
 //--------------------------------Login-----------------------------------------------------//
         [HttpPost]
@@ -96,11 +124,12 @@ namespace MAJServices.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userLogin.Username, userLogin.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    var user = _userManager.FindByIdAsync(userLogin.Username);
-                    if (user.Result == null)
+                    var user = await _userManager.FindByIdAsync(userLogin.Username);
+                    var role = await _userManager.GetRolesAsync(user);
+                    if (user == null && role == null)
                         return NoContent();
                     else
-                        return BuildToken(user.Result,"admin");
+                        return BuildToken(user,role[0]);
                 }
                 else
                 {

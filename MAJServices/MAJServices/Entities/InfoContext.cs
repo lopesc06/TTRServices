@@ -5,14 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MAJServices.Entities
 {
-    public class InfoContext : IdentityDbContext<User>
+    //The third parameter is the data type of the primary key for the UserIdentity and RoleIdentity classes.
+    public class InfoContext : IdentityDbContext<UserIdentity,RoleIdentity,string>
     {
         public InfoContext (DbContextOptions <InfoContext> options) :base (options){
+            Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User)
+            modelBuilder.Entity<UserIdentity>().HasMany(u => u.Posts).WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
         }
