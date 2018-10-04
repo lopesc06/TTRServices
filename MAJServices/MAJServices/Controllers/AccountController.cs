@@ -67,9 +67,9 @@ namespace MAJServices.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
-                new Claim("Name",userInfo.Name),
-                new Claim("Role",role),
-                new Claim("Username",userInfo.Id),
+                new Claim("name",userInfo.Name),
+                new Claim("roles",role),
+                new Claim("username",userInfo.Id),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
             };
 
