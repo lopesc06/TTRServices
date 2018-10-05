@@ -7,34 +7,31 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/users")]
     public class UserController : Controller
     {
         private IUserInfoRepository _userInfoRepository;
-        
-        public UserController(IUserInfoRepository userInfoRepository)
+        private readonly UserManager<UserIdentity> _userManager;
+
+        public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager)
         {
             _userInfoRepository = userInfoRepository;
+            _userManager = userManager;
         }
 
 
 //-------------------Get all Users with or without users' posts------------------------------------------------//
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme , Policy = "ElevatedPrivilages")]
+        
         [HttpGet()]
-        public ActionResult GetUsers(bool includePosts = false)
+        public async Task<IActionResult> GetUsersAsync(bool includePosts = false)
         {
             var users = _userInfoRepository.GetUsers(includePosts);
             IEnumerable result;
@@ -44,6 +41,8 @@ namespace MAJServices.Controllers
                 foreach (UserDto r in result)
                 {
                     var user = users.Where(u => u.Id == r.Id).FirstOrDefault();
+                    var userRole =await _userManager.GetRolesAsync(user);
+                    r.Role = userRole[0];
                     r.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
                 }
             }
@@ -55,9 +54,9 @@ namespace MAJServices.Controllers
         }
 
 //----------------Get User with or without user's posts------------------------------------------------------//
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Policy = "LowPrivilages")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Policy = "ElevatedPrivilages")]
         [HttpGet("{id}", Name = "GetUser")]
-        public ActionResult GetUser(string id, bool includePosts = false)
+        public async Task<IActionResult> GetUserAsync(string id, bool includePosts = false)
         {
             var user = _userInfoRepository.GetUser(id, includePosts);
             if (user == null)
@@ -65,6 +64,8 @@ namespace MAJServices.Controllers
             if (includePosts)
             {
                 var result = Mapper.Map<UserDto>(user);
+                var userRole = await _userManager.GetRolesAsync(user);
+                result.Role = userRole[0];
                 result.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
                 return Ok(result);
             }
@@ -76,7 +77,7 @@ namespace MAJServices.Controllers
         }
 //-----------------------------------Delete User-----------------------------------//
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(string id)
+        public IActionResult DeleteUser(string id)
         {
             if (!_userInfoRepository.UserExist(id))
             {
@@ -97,7 +98,7 @@ namespace MAJServices.Controllers
         }
 //------------------------------------Full update of user---------------------------------------//
         [HttpPut("userupdate/{id}")]
-        public ActionResult UserUpdate(string id, [FromBody]UserForUpdateDto userUpdate)
+        public async Task<IActionResult> UserUpdateAsync(string id, [FromBody]UserForUpdateDto userUpdate)
         {
             if (!_userInfoRepository.UserExist(id))
             {
@@ -108,6 +109,7 @@ namespace MAJServices.Controllers
                 return BadRequest(ModelState);
             }
             var UserEntity = _userInfoRepository.GetUser(id, false);
+
             if (UserEntity == null)
             {
                 return NotFound();
@@ -117,12 +119,19 @@ namespace MAJServices.Controllers
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
+            var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
+            var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
+            var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, userUpdate.Role);
+            if(!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
+            {
+                return StatusCode(500, "A problem happened while Updating User's Role request");
+            }
             return NoContent();
         }
 
 //----------------------------------------Partial User Update----------------------------//
         [HttpPatch("userupdate/{id}")]
-        public ActionResult PartialUserUpdate(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
+        public async Task<IActionResult> PartialUserUpdateAsync(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
         {
             if (!_userInfoRepository.UserExist(id))
             {
@@ -153,6 +162,13 @@ namespace MAJServices.Controllers
             if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
+            }
+            var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
+            var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
+            var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, UserToPatch.Role);
+            if (!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
+            {
+                return StatusCode(500, "A problem happened while Updating User's Role request");
             }
             return NoContent();
         }

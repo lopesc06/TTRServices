@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -97,7 +95,7 @@ namespace MAJServices.Controllers
             bool RoleExists = await _roleManager.RoleExistsAsync(role);
             if (!RoleExists)
             {
-                return NotFound("Role Doesn't exists");
+                role = "General";
             }
             bool UserHasRole = await _userManager.IsInRoleAsync(user, role);
             if (!UserHasRole)
@@ -117,7 +115,7 @@ namespace MAJServices.Controllers
 //--------------------------------Login-----------------------------------------------------//
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] CredentialsViewModel userLogin)
+        public async Task<IActionResult> Login([FromBody] LogIn userLogin)
         {
             if (ModelState.IsValid)
             {
