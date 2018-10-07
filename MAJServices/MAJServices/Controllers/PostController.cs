@@ -1,13 +1,15 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MAJServices.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/users")]
     public class PostController : Controller
     {
@@ -21,7 +23,7 @@ namespace MAJServices.Controllers
 
         //Get a post from a user
         [HttpGet("{iduser}/post/{idPost}", Name ="GetUserPost")]
-        public ActionResult GetUserPost(int idUser, int idPost){
+        public IActionResult GetUserPost(string idUser, int idPost){
             if (!_userInfoRepository.UserExist(idUser))
             {
                 return NotFound();
@@ -37,7 +39,7 @@ namespace MAJServices.Controllers
 
         //Add post from a user
         [HttpPost("{iduser}/post")]
-        public ActionResult AddUserPost(int idUser,[FromBody]PostForCreationDto postForCreationDto)
+        public IActionResult AddUserPost(string idUser,[FromBody]PostForCreationDto postForCreationDto)
         {
             if (!_userInfoRepository.UserExist(idUser))
             {
@@ -58,11 +60,11 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             var CreatedPost = Mapper.Map<PostDto>(CreatePost);
-            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatePost);
+            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatedPost);
         }
 
         [HttpDelete("{iduser}/post/{idpost}")]
-        public ActionResult DeleteUserPost(int idUser, int idPost)
+        public IActionResult DeleteUserPost(string idUser, int idPost)
         {
             if (!_userInfoRepository.UserExist(idUser))
             {
@@ -82,7 +84,7 @@ namespace MAJServices.Controllers
         }
 
         [HttpPatch("{iduser}/post/{idpost}")]
-        public ActionResult PatchUserPost(int iduser , int idpost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
+        public IActionResult PatchUserPost(string iduser , int idpost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {
             if (!_userInfoRepository.UserExist(iduser) || !_postInfoRepository.PostExist(idpost))
             {

@@ -21,7 +21,7 @@ namespace MAJServices.Entities
 
         public string DepartmentImageUrl { get; set; }
 
-        public ICollection<User> Members { get; set; } = new List<User>();
+        public ICollection<UserIdentity> Members { get; set; } = new List<UserIdentity>();
 
     }
 }

@@ -14,7 +14,7 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
 
-        public void AddUserToDepartment(string acronym, User member)
+        public void AddUserToDepartment(string acronym, UserIdentity member)
         {
             var department = _infoContext.Departments.Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
             department.Members.Add(member);
@@ -25,7 +25,7 @@ namespace MAJServices.Services
             _infoContext.Departments.Remove(department);
         }
 
-        public void DeleteMemberToDepartment(User member)
+        public void DeleteMemberToDepartment(UserIdentity member)
         {
             _infoContext.Users.Remove(member);
         }

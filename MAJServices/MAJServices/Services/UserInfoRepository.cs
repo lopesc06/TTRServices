@@ -15,17 +15,17 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
         
-        public void AddUser(User user)
+        public void AddUser(UserIdentity user)
         {
             _infoContext.Users.Add(user);
         }
         
-        public void DeleteUser(User user)
+        public void DeleteUser(UserIdentity user)
         {
             _infoContext.Users.Remove(user);
         }
         
-        public User GetUser(int id, bool includePosts)
+        public UserIdentity GetUser(string id, bool includePosts)
         {
             if (includePosts)
             {
@@ -34,7 +34,7 @@ namespace MAJServices.Services
             return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
         }
         
-        public IEnumerable<User> GetUsers(bool IncludePosts)
+        public IEnumerable<UserIdentity> GetUsers(bool IncludePosts)
         {
             if (IncludePosts)
             {
@@ -48,7 +48,7 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
-        public bool UserExist(int Id)
+        public bool UserExist(string Id)
         {
             return _infoContext.Users.Any(u => u.Id == Id);
         }

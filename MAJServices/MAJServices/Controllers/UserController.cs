@@ -2,27 +2,36 @@
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace MAJServices.Controllers 
+namespace MAJServices.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/users")]
     public class UserController : Controller
     {
         private IUserInfoRepository _userInfoRepository;
-        public UserController(IUserInfoRepository userInfoRepository)
+        private readonly UserManager<UserIdentity> _userManager;
+
+        public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager)
         {
             _userInfoRepository = userInfoRepository;
+            _userManager = userManager;
         }
 
-        //Get all Users with or without users' posts
+
+//-------------------Get all Users with or without users' posts------------------------------------------------//
+        
         [HttpGet()]
-        public ActionResult GetUsers(bool includePosts = false)
+        public async Task<IActionResult> GetUsersAsync(bool includePosts = false)
         {
             var users = _userInfoRepository.GetUsers(includePosts);
             IEnumerable result;
@@ -32,6 +41,8 @@ namespace MAJServices.Controllers
                 foreach (UserDto r in result)
                 {
                     var user = users.Where(u => u.Id == r.Id).FirstOrDefault();
+                    var userRole =await _userManager.GetRolesAsync(user);
+                    r.Role = userRole[0];
                     r.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
                 }
             }
@@ -42,9 +53,10 @@ namespace MAJServices.Controllers
             return Ok(result);
         }
 
-        //Get User with or without user's posts
-        [HttpGet("{id}" , Name = "GetUser")]
-        public ActionResult GetUser(int id , bool includePosts = false)
+//----------------Get User with or without user's posts------------------------------------------------------//
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Policy = "ElevatedPrivilages")]
+        [HttpGet("{id}", Name = "GetUser")]
+        public async Task<IActionResult> GetUserAsync(string id, bool includePosts = false)
         {
             var user = _userInfoRepository.GetUser(id, includePosts);
             if (user == null)
@@ -52,6 +64,8 @@ namespace MAJServices.Controllers
             if (includePosts)
             {
                 var result = Mapper.Map<UserDto>(user);
+                var userRole = await _userManager.GetRolesAsync(user);
+                result.Role = userRole[0];
                 result.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
                 return Ok(result);
             }
@@ -61,53 +75,64 @@ namespace MAJServices.Controllers
                 return Ok(result);
             }
         }
-
-        //add a new user 
-        [HttpPost("adduser")]
-        public ActionResult AddUser( [FromBody]UserForCreationDto userDto)
+//-----------------------------------Delete User-----------------------------------//
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser(string id)
         {
-            if(userDto == null)
+            if (!_userInfoRepository.UserExist(id))
             {
-                return BadRequest();
+                return NotFound();
             }
-            if (!ModelState.IsValid)
+            var UserEntity = _userInfoRepository.GetUser(id, false);
+            if (UserEntity == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
+            _userInfoRepository.DeleteUser(UserEntity);
 
-            var CreateUser = Mapper.Map<User>(userDto);
-            _userInfoRepository.AddUser(CreateUser);
             if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            var CreatedUser = Mapper.Map<UserWithoutPostsDto>(CreateUser);
-            return CreatedAtRoute("GetUser", new { id = CreateUser.Id }, CreatedUser);
+            return NoContent();
         }
-
-        //Full update of user
+//------------------------------------Full update of user---------------------------------------//
         [HttpPut("userupdate/{id}")]
-        public ActionResult UserUpdate ( int id , [FromBody]UserForUpdateDto userUpdate){
-            if(!_userInfoRepository.UserExist(id)){
+        public async Task<IActionResult> UserUpdateAsync(string id, [FromBody]UserForUpdateDto userUpdate)
+        {
+            if (!_userInfoRepository.UserExist(id))
+            {
                 return NotFound();
             }
-            if(!ModelState.IsValid || userUpdate == null){
+            if (!ModelState.IsValid || userUpdate == null)
+            {
                 return BadRequest(ModelState);
             }
-            var UserEntity = _userInfoRepository.GetUser(id,false);
-            if(UserEntity == null){
+            var UserEntity = _userInfoRepository.GetUser(id, false);
+
+            if (UserEntity == null)
+            {
                 return NotFound();
             }
             Mapper.Map(userUpdate, UserEntity);
-            if(!_userInfoRepository.SaveUser()){
+            if (!_userInfoRepository.SaveUser())
+            {
                 return StatusCode(500, "A problem happened while handling your request");
+            }
+            var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
+            var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
+            var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, userUpdate.Role);
+            if(!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
+            {
+                return StatusCode(500, "A problem happened while Updating User's Role request");
             }
             return NoContent();
         }
 
-        //Partial User Update
+//----------------------------------------Partial User Update----------------------------//
         [HttpPatch("userupdate/{id}")]
-        public ActionResult PartialUserUpdate( int id , [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch){
+        public async Task<IActionResult> PartialUserUpdateAsync(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
+        {
             if (!_userInfoRepository.UserExist(id))
             {
                 return NotFound();
@@ -122,8 +147,8 @@ namespace MAJServices.Controllers
                 return NotFound();
             }
             var UserToPatch = Mapper.Map<UserForUpdateDto>(UserEntity);
-            userPatch.ApplyTo(UserToPatch,ModelState);
-            if(!ModelState.IsValid)
+            userPatch.ApplyTo(UserToPatch, ModelState);
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -138,26 +163,15 @@ namespace MAJServices.Controllers
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            return NoContent();
-        }
-
-        //Delete User
-        [HttpDelete("{id}")]
-        public ActionResult DeleteUser(int id){
-            if(!_userInfoRepository.UserExist(id)){
-                return NotFound();
-            }
-            var UserEntity = _userInfoRepository.GetUser(id,false);
-            if(UserEntity == null){
-                return NotFound();
-            }
-            _userInfoRepository.DeleteUser(UserEntity);
-
-            if (!_userInfoRepository.SaveUser())
+            var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
+            var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
+            var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, UserToPatch.Role);
+            if (!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
             {
-                return StatusCode(500, "A problem happened while handling your request");
+                return StatusCode(500, "A problem happened while Updating User's Role request");
             }
             return NoContent();
         }
     }
 }
+

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MAJServices.Models
 {
@@ -19,7 +18,7 @@ namespace MAJServices.Models
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "This field should not be empty")]
+        //[Required(ErrorMessage = "This field should not be empty")]
         public string Role { get; set; }
     }
 }
