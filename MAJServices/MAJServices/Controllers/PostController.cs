@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MAJServices.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    
     [Route("api/users")]
     public class PostController : Controller
     {
@@ -21,7 +23,17 @@ namespace MAJServices.Controllers
             _userInfoRepository = userInfoRepository;
         }
 
+        //Get all Posts from last month
+        [HttpGet("post")]
+        public IActionResult GetLastPosts()
+        {
+            var RecentPosts = _postInfoRepository.GetRecentPosts();
+            var PostsResult = Mapper.Map<List<PostDto>>(RecentPosts);
+            return Ok(PostsResult);
+        }
+
         //Get a post from a user
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpGet("{iduser}/post/{idPost}", Name ="GetUserPost")]
         public IActionResult GetUserPost(string idUser, int idPost){
             if (!_userInfoRepository.UserExist(idUser))
@@ -29,7 +41,7 @@ namespace MAJServices.Controllers
                 return NotFound();
             }
             var UserPost = _postInfoRepository.GetUserPost(idUser, idPost);
-            var result = Mapper.Map<PostDto>(UserPost);
+            var result = Mapper.Map<PostWithoutUserDto>(UserPost);
             if(UserPost == null)
             {
                 return NotFound();
@@ -38,6 +50,7 @@ namespace MAJServices.Controllers
         }
 
         //Add post from a user
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/post")]
         public IActionResult AddUserPost(string idUser,[FromBody]PostForCreationDto postForCreationDto)
         {
@@ -47,7 +60,7 @@ namespace MAJServices.Controllers
             }
             if(postForCreationDto == null)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             if (!ModelState.IsValid)
             {
@@ -59,10 +72,12 @@ namespace MAJServices.Controllers
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            var CreatedPost = Mapper.Map<PostDto>(CreatePost);
+            var CreatedPost = Mapper.Map<PostWithoutUserDto>(CreatePost);
             return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatedPost);
         }
 
+        //Delete post from a user
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpDelete("{iduser}/post/{idpost}")]
         public IActionResult DeleteUserPost(string idUser, int idPost)
         {
@@ -83,6 +98,8 @@ namespace MAJServices.Controllers
             return NoContent();
         }
 
+        //patch a user's post
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPatch("{iduser}/post/{idpost}")]
         public IActionResult PatchUserPost(string iduser , int idpost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {

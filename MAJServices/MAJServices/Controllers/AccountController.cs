@@ -2,6 +2,8 @@
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +34,7 @@ namespace MAJServices.Controllers
         }
 
 //----------------------------Add a new user and return token--------------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserForCreationDto userDto)
         {
@@ -43,7 +46,7 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var CreateUser = Mapper.Map<Entities.UserIdentity>(userDto);
+            var CreateUser = Mapper.Map<UserIdentity>(userDto);
             CreateUser.UserName = CreateUser.Id;
             var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
             if (result.Succeeded)
@@ -91,6 +94,7 @@ namespace MAJServices.Controllers
 
         }
 //--------------------------------Add User Role----------------------------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         public async Task<IActionResult> AddUserRole(UserIdentity user, string role) {
             bool RoleExists = await _roleManager.RoleExistsAsync(role);
             if (!RoleExists)

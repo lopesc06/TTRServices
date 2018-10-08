@@ -13,14 +13,14 @@ namespace MAJServices.Models
         public string Title { get; set; }
 
         [Required]
-        [DataType(DataType.Date, ErrorMessage = "Incorrect Date, date format is type of 12/22/2018")]
+        [DataType(DataType.Date, ErrorMessage = "Incorrect Date, date format is type of MM/DD/YYYY")]
         public DateTime ReleaseDate { get; set; }
 
         [Required]
-        [DataType(DataType.Date,ErrorMessage = "Incorrect Date, date format is type of 12/22/2018")]
+        [DataType(DataType.Date,ErrorMessage = "Incorrect Date, date format is type of MM/DD/YYYY")]
         public DateTime StartDate { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Incorrect Date, date format is type of 12/22/2018")]
+        [DataType(DataType.Date, ErrorMessage = "Incorrect Date, date format is type of MM/DD/YYYY")]
         public DateTime EndDate { get; set; }
 
         [Required]

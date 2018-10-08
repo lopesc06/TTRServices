@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MAJServices.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MAJServices.Services
 {
@@ -24,6 +25,15 @@ namespace MAJServices.Services
         {
             var user = GetUser(id, false);
             user.Posts.Add(post);
+        }
+
+        public IEnumerable<Post> GetRecentPosts()
+        {
+            var Today = DateTime.Today;
+            var Limit = new DateTime(Today.Year, Today.Month - 1, Today.Day);
+            var res = _infoContext.Posts.Include(u => u.Publisher).Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit)
+                .OrderByDescending(p => p.ReleaseDate).ToList();
+            return res;
         }
 
         public Post GetUserPost(string idUser, int idPost)

@@ -30,7 +30,7 @@ namespace MAJServices
         {
             services.AddMvc();
             //var connectionString = Configuration["AzureDBString"];
-            var connectionString = Configuration.GetValue<string>("AzureDB");
+            var connectionString = Configuration.GetValue<string>("LocalDB");
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
@@ -54,8 +54,10 @@ namespace MAJServices
                      ClockSkew = TimeSpan.Zero
                  });
             services.AddAuthorization(options => {
+                options.AddPolicy("Publishers", policy => policy.RequireAuthenticatedUser().RequireRole("SuperAdmin", "Admin","Subadmin"));
                 options.AddPolicy("ElevatedPrivilages", policy => policy.RequireAuthenticatedUser().RequireRole("SuperAdmin", "Admin"));
-                options.AddPolicy("LowPrivilages", policy => policy.RequireAuthenticatedUser().RequireRole("Subadmin"));
+                //options.AddPolicy("LowPrivilages", policy => policy.RequireAuthenticatedUser().RequireRole("Subadmin"));
+                //options.AddPolicy("SuperUser", policy => policy.RequireAuthenticatedUser().RequireClaim("name", "Arturo"));
             });
         }
 
@@ -85,10 +87,10 @@ namespace MAJServices
                 cfg.CreateMap<UserForUpdateDto, UserIdentity>();
                 cfg.CreateMap<UserIdentity, UserForUpdateDto>();
                 cfg.CreateMap<UserForCreationDto, UserIdentity>();
-                cfg.CreateMap<UserIdentity, UserWithoutPostsDto>();
                 cfg.CreateMap<PostForCreationDto, Post>();
-                cfg.CreateMap<Post, PostDto>();
                 cfg.CreateMap<Post, PostForCreationDto>();
+                cfg.CreateMap<Post, PostDto>();
+                cfg.CreateMap<Post, PostWithoutUserDto>();
                 cfg.CreateMap<PostForUpdateDto, Post>();
             });
             app.UseMvc();

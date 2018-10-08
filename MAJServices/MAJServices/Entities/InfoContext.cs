@@ -14,7 +14,7 @@ namespace MAJServices.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserIdentity>().HasMany(u => u.Posts).WithOne(p => p.User)
+            modelBuilder.Entity<UserIdentity>().HasMany(u => u.Posts).WithOne(p => p.Publisher)
                 .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
         }

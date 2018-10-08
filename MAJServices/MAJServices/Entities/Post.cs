@@ -33,7 +33,7 @@ namespace MAJServices.Entities
         public ICollection<FilePath> FilePaths { get; set; }
 
         [ForeignKey("UserId")]
-        public UserIdentity User { get; set; }
+        public UserIdentity Publisher { get; set; }
         public string UserId { get; set; }
 
     }

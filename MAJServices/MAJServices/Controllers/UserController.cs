@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
     [Route("api/users")]
     public class UserController : Controller
     {
@@ -26,8 +26,7 @@ namespace MAJServices.Controllers
             _userInfoRepository = userInfoRepository;
             _userManager = userManager;
         }
-
-
+        
 //-------------------Get all Users with or without users' posts------------------------------------------------//
         
         [HttpGet()]
@@ -43,7 +42,7 @@ namespace MAJServices.Controllers
                     var user = users.Where(u => u.Id == r.Id).FirstOrDefault();
                     var userRole =await _userManager.GetRolesAsync(user);
                     r.Role = userRole[0];
-                    r.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
+                    r.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
                 }
             }
             else
@@ -54,7 +53,7 @@ namespace MAJServices.Controllers
         }
 
 //----------------Get User with or without user's posts------------------------------------------------------//
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Policy = "ElevatedPrivilages")]
+        
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUserAsync(string id, bool includePosts = false)
         {
@@ -66,7 +65,7 @@ namespace MAJServices.Controllers
                 var result = Mapper.Map<UserDto>(user);
                 var userRole = await _userManager.GetRolesAsync(user);
                 result.Role = userRole[0];
-                result.UserPosts = Mapper.Map<List<PostDto>>(user.Posts);
+                result.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
                 return Ok(result);
             }
             else

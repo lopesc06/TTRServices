@@ -10,6 +10,7 @@ namespace MAJServices.Services
     {
         void AddUserPost(string id, Post post);
         Post GetUserPost(string idUser, int idPost);
+        IEnumerable<Post> GetRecentPosts();
         void DeleteUserPost(Post post);
         bool PostExist(int idPost);
         bool SavePost();
