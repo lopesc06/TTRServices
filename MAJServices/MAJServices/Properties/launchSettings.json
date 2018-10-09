@@ -14,6 +14,7 @@
       "environmentVariables": {
         "JwtAudience": "ESCOM-IPN",
         "AzureDBString": "@\"Server=tcp:majdbserver.database.windows.net,1433;Initial Catalog=MAJDB;Persist Security Info=False;User ID=ArturoEscutia;Password=Lopesc_06;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;\";",
+        "AzureBlobStorage": "DefaultEndpointsProtocol=https;AccountName=majttrstorage;AccountKey=oZA2NgdQOvKySqcWyrKYqo8+OslLNwNF1+tlY8OhcLHc9Eype+a3zg4ALZZnPVc5RhGzd3WpdxStN9XB1+HEhw==;EndpointSuffix=core.windows.net",
         "JwtIssuer": "TTMAJ2018",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "Llave_secreta": "AIWPEORKTMCIAPERMTMAKÑFLFISMAIRIRPAKVMNXCUQASDKQNBRQIIAKAS"
