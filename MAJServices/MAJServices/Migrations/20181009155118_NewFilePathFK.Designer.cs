@@ -4,18 +4,20 @@ using MAJServices.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MAJServices.Migrations
 {
     [DbContext(typeof(InfoContext))]
-    partial class InfoContextModelSnapshot : ModelSnapshot
+    [Migration("20181009155118_NewFilePathFK")]
+    partial class NewFilePathFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -43,13 +45,7 @@ namespace MAJServices.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FileName")
-                        .IsRequired();
-
-                    b.Property<int>("IdPost");
-
-                    b.Property<string>("Path")
-                        .IsRequired();
+                    b.Property<string>("Path");
 
                     b.Property<int?>("PostId");
 
@@ -267,7 +263,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
                 {
-                    b.HasOne("MAJServices.Entities.Post", "post")
+                    b.HasOne("MAJServices.Entities.Post")
                         .WithMany("FilePaths")
                         .HasForeignKey("PostId");
                 });
