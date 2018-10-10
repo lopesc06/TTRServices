@@ -10087,13 +10087,13 @@
       "projectName": "MAJServices",
       "projectPath": "/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/MAJServices.csproj",
       "packagesPath": "/Users/javiercruzsantiago/.nuget/packages/",
-      "outputPath": "/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/obj/",
+      "outputPath": "/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/obj",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/javiercruzsantiago/.nuget/NuGet/NuGet.Config"
+        "/Users/javiercruzsantiago/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
@@ -10115,46 +10115,47 @@
     "frameworks": {
       "netcoreapp2.1": {
         "dependencies": {
-          "AutoMapper": {
-            "target": "Package",
-            "version": "[7.0.1, )"
-          },
-          "Microsoft.AspNetCore": {
-            "target": "Package",
-            "version": "[2.1.4, )"
-          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
-            "version": "[2.2.0-preview2-35157, )"
+            "version": "2.2.0-preview2-35157"
           },
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
             "target": "Package",
-            "version": "[2.1.3, )"
-          },
-          "Microsoft.AspNetCore.Mvc": {
-            "target": "Package",
-            "version": "[2.1.3, )"
-          },
-          "Microsoft.EntityFrameworkCore.Design": {
-            "target": "Package",
-            "version": "[2.1.4, )"
-          },
-          "Microsoft.EntityFrameworkCore.SqlServer": {
-            "target": "Package",
-            "version": "[2.1.4, )"
+            "version": "2.1.3"
           },
           "Microsoft.EntityFrameworkCore.Tools": {
             "target": "Package",
-            "version": "[2.1.4, )"
+            "version": "2.1.4"
           },
-          "Microsoft.NETCore.App": {
+          "Microsoft.EntityFrameworkCore.Design": {
             "target": "Package",
-            "version": "[2.1.0, )",
-            "autoReferenced": true
+            "version": "2.1.4"
+          },
+          "AutoMapper": {
+            "target": "Package",
+            "version": "7.0.1"
+          },
+          "Microsoft.AspNetCore": {
+            "target": "Package",
+            "version": "2.1.4"
+          },
+          "Microsoft.AspNetCore.Mvc": {
+            "target": "Package",
+            "version": "2.1.3"
+          },
+          "Microsoft.EntityFrameworkCore.SqlServer": {
+            "target": "Package",
+            "version": "2.1.4"
           },
           "WindowsAzure.Storage": {
             "target": "Package",
-            "version": "[9.3.2, )"
+            "version": "9.3.2"
+          },
+          "Microsoft.NETCore.App": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "2.1.0",
+            "autoReferenced": true
           }
         },
         "imports": [
