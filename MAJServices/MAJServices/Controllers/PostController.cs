@@ -4,15 +4,9 @@ using MAJServices.Models;
 using MAJServices.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
 {
@@ -57,13 +51,13 @@ namespace MAJServices.Controllers
 //-------------------------Add post from a user-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/post")]
-        public IActionResult AddUserPost(string idUser,[FromBody]PostForCreationDto postForCreationDto)
+        public IActionResult AddUserPost(string idUser, [FromBody]PostForCreationDto postForCreationDto)
         {
             if (!_userInfoRepository.UserExist(idUser))
             {
                 return NotFound();
             }
-            if(postForCreationDto == null)
+            if (postForCreationDto == null)
             {
                 return BadRequest(ModelState);
             }
@@ -79,39 +73,11 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             var CreatedPost = Mapper.Map<PostWithoutUserDto>(CreatePost);
-            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id },CreatedPost);
+            //await new PushNotificationController().SendPushNotification(CreatedPost);
+            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id }, CreatedPost);
         }
-
-//-------------------------Add File to blob storage from a user's post-----------------------------------------//
-        public async Task<JsonResult> SaveFile(IFormFile file)
-        {
-            //set the connections string
-            string storageConnectionString = Environment.GetEnvironmentVariable("AzureBlobStorage");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
-
-            // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
-            CloudBlobClient BlobClient = storageAccount.CreateCloudBlobClient();
-
-            // Create a reference to the container 
-            CloudBlobContainer BlobContainer = BlobClient.GetContainerReference("photos");
-
-            //Get a reference to the blob
-            CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName);
-
-            //Create or overwrite the blob with the contents of a local file
-            using (var filestream = file.OpenReadStream())
-            {
-                await blockBlob.UploadFromStreamAsync(filestream);
-            }
-            return Json(new
-            {
-                FileName = blockBlob.Name,
-                Path = blockBlob.Uri,
-                size = blockBlob.Properties.Length
-            });
-        }
-
-        //-------------------------Delete post from a user-----------------------------------------//
+        
+//-------------------------Delete post from a user-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpDelete("{iduser}/post/{idpost}")]
         public IActionResult DeleteUserPost(string idUser, int idPost)
