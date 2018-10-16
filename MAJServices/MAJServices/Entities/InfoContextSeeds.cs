@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MAJServices.Entities
@@ -19,7 +20,6 @@ namespace MAJServices.Entities
                 {
                     Name = "SuperAdmin",
                     NormalizedName = "SuperAdmin".ToUpper()
-
                 },
                 new RoleIdentity
                 {
@@ -48,6 +48,7 @@ namespace MAJServices.Entities
                     NormalizedUserName = "2014630132".ToUpper(),
                     Name = "Arturo",
                     LastName = "Escutia López",
+                    SecurityStamp = Guid.NewGuid().ToString(),
                     DepartmentAcronym = "CATT",
                 },
                  new UserIdentity
@@ -57,6 +58,7 @@ namespace MAJServices.Entities
                      NormalizedUserName = "2014378223".ToUpper(),
                      Name = "Javier",
                      LastName = "Cruz Santiago",
+                     SecurityStamp = Guid.NewGuid().ToString(),
                      DepartmentAcronym = "CELEX"
                  },
                  new UserIdentity
@@ -66,6 +68,7 @@ namespace MAJServices.Entities
                      NormalizedUserName = "2014631903".ToUpper(),
                      Name = "Miguel",
                      LastName = "Medina Zarazúa",
+                     SecurityStamp = Guid.NewGuid().ToString(),
                      DepartmentAcronym = "UPIS"
                  },
                  new UserIdentity
@@ -75,6 +78,7 @@ namespace MAJServices.Entities
                      NormalizedUserName = "2014193056".ToUpper(),
                      Name = "Axel",
                      LastName = "Servantes Vargas",
+                     SecurityStamp = Guid.NewGuid().ToString(),
                      DepartmentAcronym = "GE"
                  });
         }

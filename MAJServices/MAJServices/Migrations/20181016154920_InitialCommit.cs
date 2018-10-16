@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MAJServices.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCommit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,6 +61,7 @@ namespace MAJServices.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
+                    Id = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -75,21 +76,21 @@ namespace MAJServices.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(maxLength: 30, nullable: false),
                     LastName = table.Column<string>(maxLength: 40, nullable: false),
                     UserImageUrl = table.Column<string>(nullable: true),
-                    DepartmentId = table.Column<string>(nullable: true)
+                    Acronym = table.Column<string>(nullable: true),
+                    DepartmentAcronym = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Departments_DepartmentId",
-                        column: x => x.DepartmentId,
+                        name: "FK_AspNetUsers_Departments_Acronym",
+                        column: x => x.Acronym,
                         principalTable: "Departments",
                         principalColumn: "Name",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -207,8 +208,10 @@ namespace MAJServices.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Path = table.Column<string>(nullable: true),
-                    PostId = table.Column<int>(nullable: true)
+                    FileName = table.Column<string>(nullable: false),
+                    Path = table.Column<string>(nullable: false),
+                    PostId = table.Column<int>(nullable: true),
+                    IdPost = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,7 +221,41 @@ namespace MAJServices.Migrations
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "fd57ff74-8930-4259-97af-f118d66e84fe", "9d89b675-18e5-4717-9ad5-61df9d3de11f", "SuperAdmin", "SUPERADMIN" },
+                    { "4722f133-1089-4488-96f0-f672c9b5b4bc", "66b9dc93-ff24-41ce-8dea-67cf80a6b80a", "Admin", "ADMIN" },
+                    { "8a163f6c-cc83-437a-b62d-9dc629c78882", "b1cdde56-aa49-481b-8f1f-4fb21f002a67", "Subadmin", "SUBADMIN" },
+                    { "93779d28-614d-401e-ac06-006e384e077b", "a40841ad-c3e6-4941-a2a3-76ea1f6d9940", "General", "GENERAL" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Acronym", "ConcurrencyStamp", "DepartmentAcronym", "Email", "EmailConfirmed", "LastName", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserImageUrl", "UserName" },
+                values: new object[,]
+                {
+                    { "2014630132", 0, null, "1b981882-5961-4dbb-bd80-1687b207d803", "CATT", null, false, "Escutia López", false, null, "Arturo", null, "2014630132", null, null, false, null, false, null, "2014630132" },
+                    { "2014378223", 0, null, "f136891d-6f6c-4e77-9b7e-3e06304c7a9d", "CELEX", null, false, "Cruz Santiago", false, null, "Javier", null, "2014378223", null, null, false, null, false, null, "2014378223" },
+                    { "2014631903", 0, null, "c3cae711-9fa7-4ce0-845c-b9f3c5316cac", "UPIS", null, false, "Medina Zarazúa", false, null, "Miguel", null, "2014631903", null, null, false, null, false, null, "2014631903" },
+                    { "2014193056", 0, null, "6e66d7b8-53d6-47e8-bfaf-e03be2466823", "GE", null, false, "Servantes Vargas", false, null, "Axel", null, "2014193056", null, null, false, null, false, null, "2014193056" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Departments",
+                columns: new[] { "Name", "Acronym", "DepartmentImageUrl", "HexColor" },
+                values: new object[,]
+                {
+                    { "Centro de Lenguajes Extranjeras", "CELEX", null, null },
+                    { "Comisión Académica de Trabajos Terminales", "CATT", null, null },
+                    { "Gestión Escolar", "GE", null, null },
+                    { "Unidad Politécnica de Integración Social", "UPIS", null, null },
+                    { "Departamento de Extensión y Apoyos Educativos", "DEAE", null, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -249,9 +286,9 @@ namespace MAJServices.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_DepartmentId",
+                name: "IX_AspNetUsers_Acronym",
                 table: "AspNetUsers",
-                column: "DepartmentId");
+                column: "Acronym");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",

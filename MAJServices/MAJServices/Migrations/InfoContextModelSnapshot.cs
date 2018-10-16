@@ -122,10 +122,10 @@ namespace MAJServices.Migrations
                     b.ToTable("AspNetRoles");
 
                     b.HasData(
-                        new { Id = "7df3acd9-73a7-48d2-a8d4-a504ffa89815", ConcurrencyStamp = "503615ff-1f6f-43ea-a395-801f4cb897c2", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
-                        new { Id = "9100af70-37d9-4ea4-bc48-a2ffd0cd1f4b", ConcurrencyStamp = "efaa4104-da9a-4dc0-8152-480f340b9c1a", Name = "Admin", NormalizedName = "ADMIN" },
-                        new { Id = "4c57acdd-5d20-45d1-bf0c-f76ab8f18dd5", ConcurrencyStamp = "443f11be-7ff1-48bb-bc31-a304565cca3f", Name = "Subadmin", NormalizedName = "SUBADMIN" },
-                        new { Id = "2b310ff8-60f5-4e70-9b2a-e6ee5c73f259", ConcurrencyStamp = "c13ac7d3-3739-428d-b471-15691c5e556a", Name = "General", NormalizedName = "GENERAL" }
+                        new { Id = "01623f6e-839b-488f-bcf6-b0823b60a7e4", ConcurrencyStamp = "1287dec3-cdea-49d6-8b7b-4df56af28be1", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
+                        new { Id = "7ade0ced-7739-4be1-9019-4d310bef3beb", ConcurrencyStamp = "95447237-21c5-43f7-b065-7bbe6fa33ca6", Name = "Admin", NormalizedName = "ADMIN" },
+                        new { Id = "76d902c3-5332-4698-81d1-3d83c07f4a25", ConcurrencyStamp = "2b74cc46-c85d-49b3-813f-57f23b87ed3d", Name = "Subadmin", NormalizedName = "SUBADMIN" },
+                        new { Id = "f94a86cd-c4c2-44e5-b6c7-f407e01d4105", ConcurrencyStamp = "f0d3a2eb-55ed-478f-b060-7559aa6fa71a", Name = "General", NormalizedName = "GENERAL" }
                     );
                 });
 
@@ -196,10 +196,10 @@ namespace MAJServices.Migrations
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
-                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "ed1c34a7-c7ce-48e0-b680-364569d7f4b2", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014630132" },
-                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "4b05f0e2-135e-4683-93d9-73c04420119c", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014378223" },
-                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "5046e0ac-fd1c-4b43-9072-a24f28d916e6", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014631903" },
-                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "15fcce1f-4ed3-49ce-bac9-4996bc860a67", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014193056" }
+                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "f5e3ae9c-4d40-49a0-af2c-c111aa453e3f", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, SecurityStamp = "8ac84725-b48d-4fc0-b43e-5519d8101f84", TwoFactorEnabled = false, UserName = "2014630132" },
+                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "07076940-5ad9-4a39-890c-49f80b638c96", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, SecurityStamp = "6ae71fe3-82de-46a0-a734-053a5cf59d49", TwoFactorEnabled = false, UserName = "2014378223" },
+                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "e5a23e15-9532-4ccf-9328-301f33f0a95b", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, SecurityStamp = "c8686797-31ed-40cf-9a6c-1845ae332e45", TwoFactorEnabled = false, UserName = "2014631903" },
+                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "1cc83d86-1f9a-4dd4-af90-1242e14e4698", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, SecurityStamp = "1406e2e3-5f80-48f9-a5f8-7138476b5af1", TwoFactorEnabled = false, UserName = "2014193056" }
                     );
                 });
 

@@ -18,45 +18,14 @@ namespace MAJServices.Seeds
         }
 
         [HttpGet("roles")]
-        public async Task<IActionResult> SeedUsers(UserManager<UserIdentity> userManager)
+        public async Task<IActionResult> SeedUsers()
         {
-            List<UserIdentity> users = new List<UserIdentity>(){
-                new UserIdentity
-                {
-                    Id = "2014630132",
-                    UserName = "2014630132",
-                    Name = "Arturo",
-                    LastName = "Escutia López",
-                    DepartmentAcronym = "CATT",
-                },
-                 new UserIdentity
-                 {
-                     Id = "2014378223",
-                     UserName = "2014378223",
-                     Name = "Javier",
-                     LastName = "Cruz Santiago",
-                     DepartmentAcronym = "CELEX"
-                 },
-                 new UserIdentity
-                 {
-                     Id = "2014631903",
-                     UserName = "2014631903",
-                     Name = "Miguel",
-                     LastName = "Medina Zarazúa",
-                     DepartmentAcronym = "UPIS"
-                 },
-                 new UserIdentity
-                 {
-                     Id = "2014193056",
-                     UserName = "2014193056",
-                     Name = "Axel",
-                     LastName = "Servantes Vargas",
-                     DepartmentAcronym = "GE"
-                }};
-
-            foreach(UserIdentity user in users){
+            List<string> idUsers = new List<string>() { "2014630132", "2014378223","2014631903","2014193056" };
+                
+            foreach(string idUser in idUsers){
+                var user = await _userManager.FindByIdAsync(idUser);
                 var isInRole = await _userManager.GetRolesAsync(user);
-                if(isInRole == null){
+                if(isInRole.Count > 0){
                     await _userManager.AddToRoleAsync(user, "Admin");
                     var hasPassword = await _userManager.HasPasswordAsync(user);
                     if(!hasPassword){

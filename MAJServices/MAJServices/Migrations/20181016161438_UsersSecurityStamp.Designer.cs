@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAJServices.Migrations
 {
     [DbContext(typeof(InfoContext))]
-    [Migration("20181009155118_NewFilePathFK")]
-    partial class NewFilePathFK
+    [Migration("20181016161438_UsersSecurityStamp")]
+    partial class UsersSecurityStamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -37,6 +37,14 @@ namespace MAJServices.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Departments");
+
+                    b.HasData(
+                        new { Name = "Centro de Lenguajes Extranjeras", Acronym = "CELEX" },
+                        new { Name = "Comisión Académica de Trabajos Terminales", Acronym = "CATT" },
+                        new { Name = "Gestión Escolar", Acronym = "GE" },
+                        new { Name = "Unidad Politécnica de Integración Social", Acronym = "UPIS" },
+                        new { Name = "Departamento de Extensión y Apoyos Educativos", Acronym = "DEAE" }
+                    );
                 });
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
@@ -45,7 +53,13 @@ namespace MAJServices.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Path");
+                    b.Property<string>("FileName")
+                        .IsRequired();
+
+                    b.Property<int>("IdPost");
+
+                    b.Property<string>("Path")
+                        .IsRequired();
 
                     b.Property<int?>("PostId");
 
@@ -108,6 +122,13 @@ namespace MAJServices.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new { Id = "01623f6e-839b-488f-bcf6-b0823b60a7e4", ConcurrencyStamp = "1287dec3-cdea-49d6-8b7b-4df56af28be1", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
+                        new { Id = "7ade0ced-7739-4be1-9019-4d310bef3beb", ConcurrencyStamp = "95447237-21c5-43f7-b065-7bbe6fa33ca6", Name = "Admin", NormalizedName = "ADMIN" },
+                        new { Id = "76d902c3-5332-4698-81d1-3d83c07f4a25", ConcurrencyStamp = "2b74cc46-c85d-49b3-813f-57f23b87ed3d", Name = "Subadmin", NormalizedName = "SUBADMIN" },
+                        new { Id = "f94a86cd-c4c2-44e5-b6c7-f407e01d4105", ConcurrencyStamp = "f0d3a2eb-55ed-478f-b060-7559aa6fa71a", Name = "General", NormalizedName = "GENERAL" }
+                    );
                 });
 
             modelBuilder.Entity("MAJServices.Entities.UserIdentity", b =>
@@ -117,10 +138,12 @@ namespace MAJServices.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<string>("Acronym");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("DepartmentId");
+                    b.Property<string>("DepartmentAcronym");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);
@@ -162,7 +185,7 @@ namespace MAJServices.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("Acronym");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -173,6 +196,13 @@ namespace MAJServices.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "f5e3ae9c-4d40-49a0-af2c-c111aa453e3f", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, SecurityStamp = "8ac84725-b48d-4fc0-b43e-5519d8101f84", TwoFactorEnabled = false, UserName = "2014630132" },
+                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "07076940-5ad9-4a39-890c-49f80b638c96", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, SecurityStamp = "6ae71fe3-82de-46a0-a734-053a5cf59d49", TwoFactorEnabled = false, UserName = "2014378223" },
+                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "e5a23e15-9532-4ccf-9328-301f33f0a95b", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, SecurityStamp = "c8686797-31ed-40cf-9a6c-1845ae332e45", TwoFactorEnabled = false, UserName = "2014631903" },
+                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "1cc83d86-1f9a-4dd4-af90-1242e14e4698", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, SecurityStamp = "1406e2e3-5f80-48f9-a5f8-7138476b5af1", TwoFactorEnabled = false, UserName = "2014193056" }
+                    );
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -263,7 +293,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
                 {
-                    b.HasOne("MAJServices.Entities.Post")
+                    b.HasOne("MAJServices.Entities.Post", "post")
                         .WithMany("FilePaths")
                         .HasForeignKey("PostId");
                 });
@@ -280,7 +310,7 @@ namespace MAJServices.Migrations
                 {
                     b.HasOne("MAJServices.Entities.Department", "Department")
                         .WithMany("Members")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("Acronym");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
