@@ -24,11 +24,9 @@ namespace MAJServices.Models
         [Required(ErrorMessage = "This field should not be empty")]
         public string Role { get; set; }
 
-        [Required(ErrorMessage = "This field should not be empty")]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        [Required(ErrorMessage = "This field should not be empty")]
 
         public string DepartmentAcronym { get; set; }
     }

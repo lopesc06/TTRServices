@@ -1,9 +1,26 @@
 ﻿<Properties StartupConfiguration="{5A383D5B-E19F-449A-9128-22BFFE6E8D22}|Default">
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="MAJServices/Controllers/UserController.cs">
+    <Files>
+      <File FileName="MAJServices/Entities/InfoContextSeeds.cs" Line="17" Column="55" />
+      <File FileName="MAJServices/Entities/UserIdentity.cs" Line="26" Column="9" />
+      <File FileName="MAJServices/Seeds/MyIdentityDataInitializer.cs" Line="59" Column="38" />
+      <File FileName="MAJServices/Entities/InfoContext.cs" Line="19" Column="53" />
+      <File FileName="MAJServices/Startup.cs" Line="31" Column="13" />
+      <File FileName="MAJServices/Controllers/AccountController.cs" Line="73" Column="38" />
+      <File FileName="MAJServices/Models/UserDto.cs" Line="14" Column="54" />
+      <File FileName="MAJServices/Models/UserForCreationDto.cs" Line="17" Column="68" />
+      <File FileName="MAJServices/Models/UserForUpdateDto.cs" Line="21" Column="54" />
+      <File FileName="MAJServices/Models/UserWithoutPostsDto.cs" Line="11" Column="54" />
+      <File FileName="MAJServices/Migrations/20181016153826_DepartmentFKandSeeds.cs" Line="1" Column="1" />
+      <File FileName="MAJServices/Migrations/InfoContextModelSnapshot.cs" Line="1" Column="1" />
+      <File FileName="MAJServices/Migrations/20181016153826_DepartmentFKandSeeds.Designer.cs" Line="1" Column="1" />
+      <File FileName="MAJServices/Controllers/UserController.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/Controllers/AccountController.cs" relfile="MAJServices/Controllers/AccountController.cs" line="159" column="1" />
+      <Breakpoint file="/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/Controllers/AccountController.cs" relfile="MAJServices/Controllers/AccountController.cs" line="161" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.MAJServices PreferredExecutionTarget="MonoDevelop.Default" />

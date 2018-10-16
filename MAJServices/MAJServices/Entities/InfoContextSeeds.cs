@@ -7,39 +7,45 @@ namespace MAJServices.Entities
     {
         public static void SeedData(ModelBuilder modelBuilder)
         {
-            seedDepartments(modelBuilder);
-            seedRoles(modelBuilder);
-            seedUsers(modelBuilder);
+            SeedDepartments(modelBuilder);
+            SeedRoles(modelBuilder);
+            SeedUsers(modelBuilder);
         }
 
-        private static void seedRoles(ModelBuilder modelBuilder)
+        private static void SeedRoles(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<RoleIdentity>().HasData(
                 new RoleIdentity
                 {
-                    Name = "SuperAdmin"
+                    Name = "SuperAdmin",
+                    NormalizedName = "SuperAdmin".ToUpper()
+
                 },
                 new RoleIdentity
                 {
-                    Name = "Admin"
+                    Name = "Admin",
+                    NormalizedName = "Admin".ToUpper()
                 },
                 new RoleIdentity
                 {
-                    Name = "Subadmin"
+                    Name = "Subadmin",
+                    NormalizedName = "Subadmin".ToUpper()
                 },
                 new RoleIdentity
                 {
-                    Name = "General"
+                    Name = "General",
+                    NormalizedName = "General".ToUpper()
                 });
         }
 
-        private static void seedUsers(ModelBuilder modelBuilder)
+        private static void SeedUsers(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserIdentity>().HasData(
                 new UserIdentity
                 {
                     Id = "2014630132",
                     UserName = "2014630132",
+                    NormalizedUserName = "2014630132".ToUpper(),
                     Name = "Arturo",
                     LastName = "Escutia López",
                     DepartmentAcronym = "CATT",
@@ -48,6 +54,7 @@ namespace MAJServices.Entities
                  {
                      Id = "2014378223",
                      UserName = "2014378223",
+                     NormalizedUserName = "2014378223".ToUpper(),
                      Name = "Javier",
                      LastName = "Cruz Santiago",
                      DepartmentAcronym = "CELEX"
@@ -56,6 +63,7 @@ namespace MAJServices.Entities
                  {
                      Id = "2014631903",
                      UserName = "2014631903",
+                     NormalizedUserName = "2014631903".ToUpper(),
                      Name = "Miguel",
                      LastName = "Medina Zarazúa",
                      DepartmentAcronym = "UPIS"
@@ -64,13 +72,14 @@ namespace MAJServices.Entities
                  {
                      Id = "2014193056",
                      UserName = "2014193056",
+                     NormalizedUserName = "2014193056".ToUpper(),
                      Name = "Axel",
                      LastName = "Servantes Vargas",
                      DepartmentAcronym = "GE"
                  });
         }
 
-        private static void seedDepartments(ModelBuilder modelBuilder)
+        private static void SeedDepartments(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Department>().HasData(
                 new Department
