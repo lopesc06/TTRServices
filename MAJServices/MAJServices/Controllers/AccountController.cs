@@ -33,7 +33,7 @@ namespace MAJServices.Controllers
             this._configuration = configuration;
         }
 
-//----------------------------Add a new user and return token--------------------------------------------//
+//----------------------------Add a new user and his/her role--------------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserForCreationDto userDto)
@@ -54,7 +54,6 @@ namespace MAJServices.Controllers
                 await AddUserRole(CreateUser, userDto.Role);
                 var UserResultDto = Mapper.Map<UserDto>(CreateUser);
                 return CreatedAtRoute("{idUser}", new { idUser = UserResultDto.Id}, UserResultDto);
-                //return BuildToken(CreateUser, userDto.Role);
             }
             else
             {
@@ -64,16 +63,18 @@ namespace MAJServices.Controllers
 //----------------------------------Build Token For User---------------------------------------//
         private IActionResult BuildToken(UserIdentity userInfo, string role)
         {
+            var memberOf = (userInfo.DepartmentAcronym == null) ? "none" : userInfo.DepartmentAcronym;
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
                 new Claim("name",userInfo.Name),
+                new Claim("member",memberOf),
                 new Claim("roles",role),
                 new Claim("username",userInfo.Id),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
             };
-
+            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave_secreta"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

@@ -21,9 +21,9 @@ namespace MAJServices.Entities
 
         public ICollection<Post> Posts { get; set; } = new List<Post>();
 
-        [ForeignKey("DepartmentId")]
+        [ForeignKey("Acronym")]
         public Department Department { get; set; }
-        public string DepartmentId { get; set; }
+        public string DepartmentAcronym { get; set; }
     }
 }
 

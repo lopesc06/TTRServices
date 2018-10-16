@@ -35,6 +35,14 @@ namespace MAJServices.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Departments");
+
+                    b.HasData(
+                        new { Name = "Centro de Lenguajes Extranjeras", Acronym = "CELEX" },
+                        new { Name = "Comisión Académica de Trabajos Terminales", Acronym = "CATT" },
+                        new { Name = "Gestión Escolar", Acronym = "GE" },
+                        new { Name = "Unidad Politécnica de Integración Social", Acronym = "UPIS" },
+                        new { Name = "Departamento de Extensión y Apoyos Educativos", Acronym = "DEAE" }
+                    );
                 });
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
@@ -112,6 +120,13 @@ namespace MAJServices.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new { Id = "13414737-621a-49c7-ae8f-53ef3d65669e", ConcurrencyStamp = "4742a372-1d14-4ac9-9773-aa8557e39914", Name = "SuperAdmin" },
+                        new { Id = "8eda1e6e-6e50-410e-a782-dab773a2fd32", ConcurrencyStamp = "bcb5c558-3c6b-4cda-a76c-cff41d980505", Name = "Admin" },
+                        new { Id = "4def01bf-dbf1-4374-86bb-089f9c62a9d7", ConcurrencyStamp = "e6095ff2-73fe-443d-adfb-ae94ffb26efb", Name = "Subadmin" },
+                        new { Id = "9f79b910-7336-499a-8bfc-bf08c799b7e2", ConcurrencyStamp = "b799ba75-8507-4a63-bdd5-fa5434fc0127", Name = "General" }
+                    );
                 });
 
             modelBuilder.Entity("MAJServices.Entities.UserIdentity", b =>
@@ -121,10 +136,12 @@ namespace MAJServices.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<string>("Acronym");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("DepartmentId");
+                    b.Property<string>("DepartmentAcronym");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);
@@ -166,7 +183,7 @@ namespace MAJServices.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("Acronym");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -177,6 +194,13 @@ namespace MAJServices.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "c13dfeec-d988-4c0f-b60d-f5cb824a8541", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014630132" },
+                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "84f63bb8-eeb7-4797-bbaf-bf4ce43d3ab0", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014378223" },
+                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "186c7ab5-8f53-47db-9b8a-b4d633e16772", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014631903" },
+                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "19e04da0-adff-4617-8775-c3f0523a6e56", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", PhoneNumberConfirmed = false, TwoFactorEnabled = false, UserName = "2014193056" }
+                    );
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -284,7 +308,7 @@ namespace MAJServices.Migrations
                 {
                     b.HasOne("MAJServices.Entities.Department", "Department")
                         .WithMany("Members")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("Acronym");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

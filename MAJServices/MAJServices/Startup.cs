@@ -62,14 +62,8 @@ namespace MAJServices
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<UserIdentity> userManager, RoleManager<RoleIdentity> roleManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    var context = serviceScope.ServiceProvider.GetRequiredService<InfoContext>();
-            //    context.Database.Migrate();
-            //}
-            MyIdentityDataInitializer.SeedData(userManager, roleManager);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

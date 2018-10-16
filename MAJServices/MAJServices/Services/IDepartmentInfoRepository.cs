@@ -8,12 +8,13 @@ namespace MAJServices.Services
 {
     public interface IDepartmentInfoRepository
     {
+        void AddDepartment(Department department);
         Department GetDepartment(string acronym, bool includeMembers , bool includePosts);
         bool DepartmentExists(string acronym);
         IEnumerable<Department> GetDepartments(bool includeMembers, bool includePosts);
         void DeleteDepartment(Department department);
         void AddUserToDepartment(string acronym, UserIdentity member);
         void DeleteMemberToDepartment(UserIdentity member);
-        void SaveDpmt();
+        bool SaveDpmt();
     }
 }

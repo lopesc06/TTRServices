@@ -14,6 +14,11 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
 
+        public void AddDepartment(Department department)
+        {
+            _infoContext.Departments.Add(department);
+        }
+
         public void AddUserToDepartment(string acronym, UserIdentity member)
         {
             var department = _infoContext.Departments.Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
@@ -52,9 +57,9 @@ namespace MAJServices.Services
             throw new NotImplementedException();
         }
 
-        public void SaveDpmt()
+        public bool SaveDpmt()
         {
-            throw new NotImplementedException();
+            return (_infoContext.SaveChanges() >= 0);
         }
     }
 }
