@@ -25,7 +25,7 @@ namespace MAJServices.Seeds
             foreach(string idUser in idUsers){
                 var user = await _userManager.FindByIdAsync(idUser);
                 var isInRole = await _userManager.GetRolesAsync(user);
-                if(isInRole.Count > 0){
+                if(isInRole.Count == 0){
                     await _userManager.AddToRoleAsync(user, "Admin");
                     var hasPassword = await _userManager.HasPasswordAsync(user);
                     if(!hasPassword){

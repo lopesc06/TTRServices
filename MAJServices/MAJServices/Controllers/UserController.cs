@@ -18,7 +18,7 @@ namespace MAJServices.Controllers
     [Route("api/users")]
     public class UserController : Controller
     {
-        private IUserInfoRepository _userInfoRepository;
+        private readonly IUserInfoRepository _userInfoRepository;
         private readonly UserManager<UserIdentity> _userManager;
 
         public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager)
@@ -39,9 +39,10 @@ namespace MAJServices.Controllers
                 result = Mapper.Map<IEnumerable<UserDto>>(users);
                 foreach (UserDto r in result)
                 {
-                    var user = users.Where(u => u.Id == r.Id).FirstOrDefault();
+                    var user = users.FirstOrDefault(u => u.Id == r.Id);
                     var userRole =await _userManager.GetRolesAsync(user);
-                    r.Role = userRole[0];
+                    if (userRole.Count > 0)
+                        r.Role = userRole.First();
                     r.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
                 }
             }
@@ -64,7 +65,8 @@ namespace MAJServices.Controllers
             {
                 var result = Mapper.Map<UserDto>(user);
                 var userRole = await _userManager.GetRolesAsync(user);
-                result.Role = userRole[0];
+                if (userRole.Count > 0)
+                    result.Role = userRole.First();
                 result.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
                 return Ok(result);
             }

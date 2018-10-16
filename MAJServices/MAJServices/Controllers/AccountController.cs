@@ -46,6 +46,12 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var idExists = await _userManager.FindByIdAsync(userDto.Id);
+            if (idExists != null)
+            {
+                return StatusCode(409, "UserId is already in use");
+            }
+
             var CreateUser = Mapper.Map<UserIdentity>(userDto);
             CreateUser.UserName = CreateUser.Id;
             var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
@@ -53,7 +59,7 @@ namespace MAJServices.Controllers
             {
                 await AddUserRole(CreateUser, userDto.Role);
                 var UserResultDto = Mapper.Map<UserDto>(CreateUser);
-                return CreatedAtRoute("{idUser}", new { idUser = UserResultDto.Id}, UserResultDto);
+                return CreatedAtRoute("GetUser", new { id = UserResultDto.Id}, UserResultDto);
                 //return BuildToken(CreateUser, userDto.Role);
             }
             else
