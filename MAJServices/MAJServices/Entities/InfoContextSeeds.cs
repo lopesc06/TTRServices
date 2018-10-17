@@ -89,27 +89,27 @@ namespace MAJServices.Entities
                 new Department
                 {
                     Name = "Centro de Lenguajes Extranjeras",
-                    Acronym = "CELEX"
+                    DepartmentAcronym = "CELEX"
                 },
                  new Department
                  {
                      Name = "Comisión Académica de Trabajos Terminales",
-                     Acronym = "CATT"
+                     DepartmentAcronym = "CATT"
                  },
                  new Department
                  {
                      Name = "Gestión Escolar",
-                     Acronym = "GE"
+                     DepartmentAcronym = "GE"
                  },
                  new Department
                  {
                      Name = "Unidad Politécnica de Integración Social",
-                     Acronym = "UPIS"
+                     DepartmentAcronym = "UPIS"
                  },
                  new Department
                  {
                      Name = "Departamento de Extensión y Apoyos Educativos",
-                     Acronym = "DEAE"
+                     DepartmentAcronym = "DEAE"
                  });
         }
 

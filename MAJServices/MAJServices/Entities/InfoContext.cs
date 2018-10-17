@@ -16,6 +16,8 @@ namespace MAJServices.Entities
         {
             modelBuilder.Entity<UserIdentity>().HasMany(u => u.Posts).WithOne(p => p.Publisher)
                 .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Department>().HasMany(d => d.Members).WithOne(u => u.Department)
+            //    .HasForeignKey(u => u.DepartmentAcronym);
             InfoContextSeeds.SeedData(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }

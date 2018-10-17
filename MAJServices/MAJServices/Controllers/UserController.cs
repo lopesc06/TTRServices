@@ -19,12 +19,17 @@ namespace MAJServices.Controllers
     public class UserController : Controller
     {
         private readonly IUserInfoRepository _userInfoRepository;
+        private readonly RoleManager<RoleIdentity> _roleManager;
         private readonly UserManager<UserIdentity> _userManager;
+        private IDepartmentInfoRepository _departmentInfoRepository;
 
-        public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager)
+        public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager
+            , RoleManager<RoleIdentity> roleManager, IDepartmentInfoRepository departmentInfoRepository)
         {
             _userInfoRepository = userInfoRepository;
             _userManager = userManager;
+            _roleManager = roleManager;
+            _departmentInfoRepository = departmentInfoRepository;
         }
         
 //-------------------Get all Users with or without users' posts------------------------------------------------//
@@ -49,6 +54,13 @@ namespace MAJServices.Controllers
             else
             {
                 result = Mapper.Map<IEnumerable<UserWithoutPostsDto>>(users);
+                foreach (UserWithoutPostsDto r in result)
+                {
+                    var user = users.FirstOrDefault(u => u.Id == r.Id);
+                    var userRole = await _userManager.GetRolesAsync(user);
+                    if (userRole.Count > 0)
+                        r.Role = userRole.First();
+                }
             }
             return Ok(result);
         }
@@ -73,6 +85,9 @@ namespace MAJServices.Controllers
             else
             {
                 var result = Mapper.Map<UserWithoutPostsDto>(user);
+                var userRole = await _userManager.GetRolesAsync(user);
+                if (userRole.Count > 0)
+                    result.Role = userRole.First();
                 return Ok(result);
             }
         }
@@ -109,12 +124,13 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var UserEntity = _userInfoRepository.GetUser(id, false);
+            //if()
 
-            if (UserEntity == null)
-            {
-                return NotFound();
-            }
+            var UserEntity = _userInfoRepository.GetUser(id, false);
+            //if (UserEntity == null)
+            //{
+            //    return NotFound();
+            //}
             Mapper.Map(userUpdate, UserEntity);
             if (!_userInfoRepository.SaveUser())
             {
@@ -136,17 +152,14 @@ namespace MAJServices.Controllers
         {
             if (!_userInfoRepository.UserExist(id))
             {
-                return NotFound();
+                return NotFound("User's Id does not exist");
             }
             if (!ModelState.IsValid || userPatch == null)
             {
                 return BadRequest(ModelState);
             }
+            
             var UserEntity = _userInfoRepository.GetUser(id, false);
-            if (UserEntity == null)
-            {
-                return NotFound();
-            }
             var UserToPatch = Mapper.Map<UserForUpdateDto>(UserEntity);
             userPatch.ApplyTo(UserToPatch, ModelState);
             if (!ModelState.IsValid)
@@ -159,17 +172,28 @@ namespace MAJServices.Controllers
                 return BadRequest(ModelState);
             }
             Mapper.Map(UserToPatch, UserEntity);
-
+            if (!_departmentInfoRepository.DepartmentExists(UserEntity.DepartmentAcronym))
+            {
+                return NotFound("Department Acronym does not exist");
+            }
             if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
-            var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
-            var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, UserToPatch.Role);
-            if (!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
+            bool RoleExists = await _roleManager.RoleExistsAsync(UserToPatch.Role);
+            if (RoleExists)
             {
-                return StatusCode(500, "A problem happened while Updating User's Role request");
+                var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
+                var removeCurrentRoles = await _userManager.RemoveFromRolesAsync(UserEntity, getCurrentRole);
+                var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, UserToPatch.Role);
+                if (!removeCurrentRoles.Succeeded && !UpdateWithNewRole.Succeeded)
+                {
+                    return StatusCode(500, "A problem happened while Updating User's Role request");
+                }
+            }
+            else
+            {
+                return NotFound("Specified User's role to patch does not exists"); 
             }
             return NoContent();
         }

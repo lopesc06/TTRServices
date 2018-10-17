@@ -16,7 +16,7 @@ namespace MAJServices.Services
 
         public void AddUserToDepartment(string acronym, UserIdentity member)
         {
-            var department = _infoContext.Departments.Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
+            var department = _infoContext.Departments.Where(dpt => dpt.DepartmentAcronym == acronym).FirstOrDefault();
             department.Members.Add(member);
         }
 
@@ -32,19 +32,19 @@ namespace MAJServices.Services
 
         public bool DepartmentExists(string acronym)
         {
-            return _infoContext.Departments.Any(dpt => dpt.Acronym == acronym);
+            return _infoContext.Departments.Any(dpt => dpt.DepartmentAcronym == acronym);
         }
 
         public Department GetDepartment(string acronym, bool includeMembers, bool includePosts)
         {
             if( includeMembers && includePosts){
-                return _infoContext.Departments.Include(dpt => dpt.Members).ThenInclude(Users => Users.AsQueryable().Include(p=>p.Posts)).Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
+                return _infoContext.Departments.Include(dpt => dpt.Members).ThenInclude(Users => Users.AsQueryable().Include(p=>p.Posts)).Where(dpt => dpt.DepartmentAcronym == acronym).FirstOrDefault();
 
             }
             else if(includeMembers && includePosts == false){
-                return _infoContext.Departments.Include(dpt => dpt.Members).Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
+                return _infoContext.Departments.Include(dpt => dpt.Members).Where(dpt => dpt.DepartmentAcronym == acronym).FirstOrDefault();
             }
-            return _infoContext.Departments.Where(dpt => dpt.Acronym == acronym).FirstOrDefault();
+            return _infoContext.Departments.Where(dpt => dpt.DepartmentAcronym == acronym).FirstOrDefault();
         }
         
         public IEnumerable<Department> GetDepartments(bool includeMembers, bool includePosts)

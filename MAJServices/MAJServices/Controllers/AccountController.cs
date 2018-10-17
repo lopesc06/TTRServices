@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,21 +47,22 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var idExists = await _userManager.FindByIdAsync(userDto.Id);
-            if (idExists != null)
+            var IdIsInUse = await _userManager.FindByIdAsync(userDto.Id);
+            if (IdIsInUse != null)
             {
                 return StatusCode(409, "UserId is already in use");
             }
 
-            var CreateUser = Mapper.Map<UserIdentity>(userDto);
-            CreateUser.UserName = CreateUser.Id;
-            var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
+            var CreateUserIdentity = Mapper.Map<UserIdentity>(userDto);
+            CreateUserIdentity.UserName = CreateUserIdentity.Id;
+            var result = await _userManager.CreateAsync(CreateUserIdentity, userDto.Password);
             if (result.Succeeded)
             {
-                await AddUserRole(CreateUser, userDto.Role);
-                var UserResultDto = Mapper.Map<UserDto>(CreateUser);
+                await AddUserRole(CreateUserIdentity, userDto.Role);
+                var UserResultDto = Mapper.Map<UserDto>(CreateUserIdentity);
+                var roles = await _userManager.GetRolesAsync(CreateUserIdentity);
+                UserResultDto.Role = roles.Count>0 ? roles.First():null;
                 return CreatedAtRoute("GetUser", new { id = UserResultDto.Id}, UserResultDto);
-                //return BuildToken(CreateUser, userDto.Role);
             }
             else
             {
@@ -105,13 +107,12 @@ namespace MAJServices.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         public async Task<IActionResult> AddUserRole(UserIdentity user, string role) {
             bool RoleExists = await _roleManager.RoleExistsAsync(role);
-            if (!RoleExists)
-            {
-                role = "General";
-            }
+            role = RoleExists ? role : "General";
             bool UserHasRole = await _userManager.IsInRoleAsync(user, role);
             if (!UserHasRole)
             {
+                var UserRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user,UserRoles);
                 var result = await _userManager.AddToRoleAsync(user, role);
                 if (result.Succeeded)
                     return Ok();

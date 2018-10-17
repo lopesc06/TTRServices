@@ -20,10 +20,8 @@ namespace MAJServices.Entities
         public string Path { get; set; }
 
         [ForeignKey("PostId")]
-        public Post post { get; set; }
-
+        public Post Post { get; set; }
         [Required]
-        public int IdPost  { get; set; }
-
+        public int PostId { get; set; }
     }
 }

@@ -34,6 +34,7 @@ namespace MAJServices.Entities
 
         [ForeignKey("UserId")]
         public UserIdentity Publisher { get; set; }
+        [Required]
         public string UserId { get; set; }
 
     }
