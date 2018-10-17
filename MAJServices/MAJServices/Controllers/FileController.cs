@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
@@ -13,6 +16,7 @@ namespace MAJServices.Controllers
     public class FileController : Controller
     {
 //---------------------------Upload post's files into blob storage------------------------------------// 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/post/{idPost}/files")]
         public async Task<IActionResult> SavePostsFile(string iduser,string idpost,IEnumerable<IFormFile> files)
         {
@@ -64,7 +68,8 @@ namespace MAJServices.Controllers
             return Json(addedFiles);
         }
 
-//---------------------------Upload User's Profile Image into blob storage------------------------------------//
+        //---------------------------Upload User's Profile Image into blob storage------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/Image")]
         public async Task<IActionResult> SaveProfileImage(string iduser,IFormFile file)
         {

@@ -28,8 +28,8 @@ namespace MAJServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            //var connectionString = Configuration["AzureDBString"];
-            var connectionString = Configuration.GetValue<string>("LocalDB");
+            var connectionString = Configuration["AzureDBString"];
+            //var connectionString = Configuration.GetValue<string>("LocalDB");
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();

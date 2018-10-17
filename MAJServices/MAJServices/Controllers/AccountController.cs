@@ -137,10 +137,10 @@ namespace MAJServices.Controllers
                 {
                     var user = await _userManager.FindByIdAsync(userLogin.Username);
                     var role = await _userManager.GetRolesAsync(user);
-                    if (user == null && role == null)
+                    if (user == null && role.Count > 0)
                         return NoContent();
                     else
-                        return BuildToken(user,role[0]);
+                        return BuildToken(user,role.First());
                 }
                 else
                 {
