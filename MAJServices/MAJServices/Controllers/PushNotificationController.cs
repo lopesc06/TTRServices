@@ -15,9 +15,9 @@ namespace MAJServices.Controllers
         [Route("send")]
         public async Task<bool> SendPushNotification(PostWithoutUserDto post)
         {
-            var applicationID = "AAAAC0su3P0:APA91bGc35v9Am1ME4h_lL6UyRV1SriTdv-jXu6lWgP_7Xc59XU1C2pXWk2FsKddVK8jt1lnG7E3WZcthtpi97Bp3RDbgW_IFsr8Y0KKaPhzsVusFW39K65DYFgpTiKHD1UakNJlgNEM";
-            var senderId = "48506002685";
-            var deviceId = "e-IzCLPMYhE:APA91bFYJCQercJzqcPduaw0x8Vta6IRTPDOOPa6Sxb3M6yZyulzGJOrp8l-7QCykq1NqIWDU0_V0lqHa04EbMOsI4V80iMekSDf7k6Ma9WY9GZc5ao3Qf5Q6T95ZK1h9dRAqEMW-U81";
+            var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
+            var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
+            var deviceId = "GE";
 
             using (var client = new HttpClient())
             {
@@ -31,8 +31,8 @@ namespace MAJServices.Controllers
                     to = deviceId,
                     notification = new
                     {
-                        body = post.Description,
-                        title = post.Title,
+                        body = post.Description?? "CACA" ,
+                        title = post.Title ?? "CACA" ,
                         icon = "myicon",
                         color = "#FFC300"
                     },
