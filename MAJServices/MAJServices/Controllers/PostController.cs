@@ -15,13 +15,13 @@ namespace MAJServices.Controllers
     public class PostController : Controller
     {
         private IPostInfoRepository _postInfoRepository;
-        private IUserInfoRepository _userInfoRepository;
-        public PostController(IPostInfoRepository postInfoRepository , IUserInfoRepository userInfoRepository)
+        private readonly IUserInfoRepository _userInfoRepository;
+        public PostController(IPostInfoRepository postInfoRepository, IUserInfoRepository userInfoRepository)
         {
             _postInfoRepository = postInfoRepository;
             _userInfoRepository = userInfoRepository;
         }
-
+        
 //-------------------------Get all Posts from last month-----------------------------------------//
         [HttpGet("post")]
         public IActionResult GetLastPosts()
@@ -35,7 +35,7 @@ namespace MAJServices.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpGet("{iduser}/post/{idPost}", Name ="GetUserPost")]
         public IActionResult GetUserPost(string idUser, int idPost){
-            if (!_userInfoRepository.UserExist(idUser))
+            if (!_postInfoRepository.PostExist(idUser, idPost))
             {
                 return NotFound();
             }
@@ -82,7 +82,7 @@ namespace MAJServices.Controllers
         [HttpDelete("{iduser}/post/{idpost}")]
         public IActionResult DeleteUserPost(string idUser, int idPost)
         {
-            if (!_userInfoRepository.UserExist(idUser))
+            if (!_postInfoRepository.PostExist(idUser, idPost))
             {
                 return NotFound();
             }
@@ -102,16 +102,16 @@ namespace MAJServices.Controllers
 //-------------------------patch a user's post-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPatch("{iduser}/post/{idpost}")]
-        public IActionResult PatchUserPost(string iduser , int idpost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
+        public IActionResult PatchUserPost(string idUser , int idPost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {
-            if (!_userInfoRepository.UserExist(iduser) || !_postInfoRepository.PostExist(idpost))
+            if (!_postInfoRepository.PostExist(idUser,idPost))
             {
                 return NotFound();
             }
             if (!ModelState.IsValid || postPatch == null){
                 return BadRequest(ModelState);
             }
-            var PostEntity = _postInfoRepository.GetUserPost(iduser, idpost);
+            var PostEntity = _postInfoRepository.GetUserPost(idUser, idPost);
             if (PostEntity == null)
             {
                 return NotFound();

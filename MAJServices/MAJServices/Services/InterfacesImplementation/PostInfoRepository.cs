@@ -15,9 +15,8 @@ namespace MAJServices.Services
             _infoContext = infoContext;
         }
 
-        public UserIdentity GetUser(string id, bool includePosts)
+        private UserIdentity GetUser(string id, bool includePosts)
         {
-
             return _infoContext.Users.Where(u => u.Id == id.ToString()).FirstOrDefault();
         }
 
@@ -51,9 +50,9 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
-        public bool PostExist(int idPost)
+        public bool PostExist(string idUser, int idPost)
         {
-            return _infoContext.Posts.Any(p => p.Id == idPost);
+            return _infoContext.Posts.Any(p => p.Id == idPost && p.UserId == idUser);
         }
     }
 }

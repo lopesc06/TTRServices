@@ -38,7 +38,8 @@ namespace MAJServices.Services
         {
             if (IncludePosts)
             {
-                return _infoContext.Users.Include(u => u.Posts).OrderBy( u => u.Name).ThenBy( u => u.LastName).ToList();
+                
+                return _infoContext.Users.Include( u => u.Posts).OrderBy( u => u.Name).ThenBy( u => u.LastName).ToList();
             }
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
         }

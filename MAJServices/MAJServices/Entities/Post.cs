@@ -30,7 +30,7 @@ namespace MAJServices.Entities
         [MaxLength(200)]
         public string Description { get; set; }
 
-        public ICollection<FilePath> FilePaths { get; set; }
+        public ICollection<FilePath> FilePaths { get; set; } = new List<FilePath>();
 
         [ForeignKey("UserId")]
         public UserIdentity Publisher { get; set; }

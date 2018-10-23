@@ -13,11 +13,11 @@ namespace MAJServices.Controllers
     public class PushNotificationController
     {
         [Route("send")]
-        public async Task<bool> SendPushNotification(PostWithoutUserDto post)
+        public async Task<bool> SendPushNotification(PostWithoutUserDto post,string topic = null )
         {
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
-            var deviceId = "GE";
+            var destination = "/topics/"+topic;
 
             using (var client = new HttpClient())
             {
@@ -28,11 +28,11 @@ namespace MAJServices.Controllers
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={senderId}");
                 var data = new
                 {
-                    to = deviceId,
+                    to = destination,
                     notification = new
                     {
-                        body = post.Description?? "CACA" ,
-                        title = post.Title ?? "CACA" ,
+                        body = "Este es un mensaje de prueba "+topic ,
+                        title = "notificacion para los interesados de "+topic ,
                         icon = "myicon",
                         color = "#FFC300"
                     },

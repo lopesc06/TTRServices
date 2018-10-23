@@ -13,7 +13,7 @@ namespace MAJServices.Services
         Post GetUserPost(string idUser, int idPost);
         IEnumerable<Post> GetRecentPosts();
         void DeleteUserPost(Post post);
-        bool PostExist(int idPost);
+        bool PostExist(string idUser, int idPost);
         bool SavePost();
     }
 }

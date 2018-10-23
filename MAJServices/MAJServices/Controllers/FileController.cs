@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using MAJServices.Entities;
+using MAJServices.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +18,23 @@ namespace MAJServices.Controllers
     [Route("api/users")]
     public class FileController : Controller
     {
+        private IPostInfoRepository _postInfoRepository;
+        public FileController(IPostInfoRepository postInfoRepository)
+        {
+            _postInfoRepository = postInfoRepository;
+        }
+        
 //---------------------------Upload post's files into blob storage------------------------------------// 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/post/{idPost}/files")]
-        public async Task<IActionResult> SavePostsFile(string iduser,string idpost,IEnumerable<IFormFile> files)
+        public async Task<IActionResult> SavePostsFile(string idUser,int idPost,IEnumerable<IFormFile> files)
         {
-            if(files == null || !files.Any()){
+            if(!_postInfoRepository.PostExist(idUser, idPost))
+            {
+                return NotFound();
+            }
+            var postEntity = _postInfoRepository.GetUserPost(idUser, idPost);
+            if (files == null || !files.Any()){
                 return BadRequest("files should not be empty");
             }
 
@@ -32,7 +46,7 @@ namespace MAJServices.Controllers
             CloudBlobClient BlobClient = storageAccount.CreateCloudBlobClient();
 
             // Create a reference to the container 
-            CloudBlobContainer BlobContainer = BlobClient.GetContainerReference("postsfiles-"+iduser+"-"+idpost);
+            CloudBlobContainer BlobContainer = BlobClient.GetContainerReference("postsfiles-"+idUser+"-"+idPost);
             bool containerExists = await BlobContainer.ExistsAsync();
             if (!containerExists)
             {
@@ -46,7 +60,7 @@ namespace MAJServices.Controllers
                 await BlobContainer.SetPermissionsAsync(permissions);
             }
 
-            List<object> addedFiles = new List<object>();
+            List<FilePath> addedFiles = new List<FilePath>();
 
             foreach(IFormFile file in files){
 
@@ -58,14 +72,25 @@ namespace MAJServices.Controllers
                 {
                     await blockBlob.UploadFromStreamAsync(filestream);
                 }
-                addedFiles.Add(new
-                {
-                    name = blockBlob.Name,
-                    uri = blockBlob.Uri,
-                    size = blockBlob.Properties.Length
-                });
+                var fileEntity = new FilePath{
+                    FileName = blockBlob.Name,
+                    Path = blockBlob.Uri.ToString(),
+                    PostId = idPost,
+                };
+                addedFiles.Add(fileEntity);
+                postEntity.FilePaths.Add(fileEntity);
             }
-            return Json(addedFiles);
+            
+            if (!_postInfoRepository.SavePost())
+            {
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            var json = JsonConvert.SerializeObject(addedFiles, Formatting.None,
+                        new JsonSerializerSettings()
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        });
+            return Content(json, "application/json");
         }
 
         //---------------------------Upload User's Profile Image into blob storage------------------------------------//
