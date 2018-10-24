@@ -36,6 +36,7 @@
           "Microsoft.NETCore.App": "2.1.0",
           "Microsoft.VisualStudio.Web.BrowserLink": "2.1.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.1.0",
+          "Newtonsoft.Json": "11.0.2",
           "WindowsAzure.Storage": "9.3.2"
         },
         "runtime": {

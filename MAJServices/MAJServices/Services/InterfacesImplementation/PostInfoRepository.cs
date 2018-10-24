@@ -30,14 +30,16 @@ namespace MAJServices.Services
         {
             var Today = DateTime.Today;
             var Limit = new DateTime(Today.Year, Today.Month - 1, Today.Day);
-            var res = _infoContext.Posts.Include(u => u.Publisher).Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit)
+            var res = _infoContext.Posts.Include(p => p.Publisher).Include(p => p.FilePaths)
+                .Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit)
                 .OrderByDescending(p => p.ReleaseDate).ToList();
             return res;
         }
 
         public Post GetUserPost(string idUser, int idPost)
         {
-            return _infoContext.Posts.Where(p => p.UserId == idUser.ToString() && p.Id == idPost).FirstOrDefault();
+            return _infoContext.Posts.Include(p=>p.FilePaths)
+                    .Where(p => p.UserId == idUser.ToString() && p.Id == idPost).FirstOrDefault();
         }
 
         public void DeleteUserPost(Post post)

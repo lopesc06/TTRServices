@@ -29,7 +29,8 @@ namespace MAJServices.Services
         {
             if (includePosts)
             {
-                return _infoContext.Users.Include(p=>p.Posts).Where(u => u.Id == id).FirstOrDefault();
+                var user = _infoContext.Users.Include(u=>u.Posts).ThenInclude(p=>p.FilePaths)
+                    .Where(u => u.Id == id).FirstOrDefault();
             }
             return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
         }
@@ -38,8 +39,9 @@ namespace MAJServices.Services
         {
             if (IncludePosts)
             {
-                
-                return _infoContext.Users.Include( u => u.Posts).OrderBy( u => u.Name).ThenBy( u => u.LastName).ToList();
+
+               return _infoContext.Users.Include(u => u.Posts).ThenInclude(p => p.FilePaths)
+                    .OrderBy( u => u.Name).ThenBy( u => u.LastName).ToList();
             }
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
         }

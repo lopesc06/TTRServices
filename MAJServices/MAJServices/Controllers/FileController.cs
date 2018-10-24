@@ -1,4 +1,6 @@
-﻿using MAJServices.Entities;
+﻿using AutoMapper;
+using MAJServices.Entities;
+using MAJServices.Models;
 using MAJServices.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -60,7 +62,7 @@ namespace MAJServices.Controllers
                 await BlobContainer.SetPermissionsAsync(permissions);
             }
 
-            List<FilePath> addedFiles = new List<FilePath>();
+            List<FilePathDto> addedFiles = new List<FilePathDto>();
 
             foreach(IFormFile file in files){
 
@@ -77,7 +79,8 @@ namespace MAJServices.Controllers
                     Path = blockBlob.Uri.ToString(),
                     PostId = idPost,
                 };
-                addedFiles.Add(fileEntity);
+                var fileDto = Mapper.Map<FilePathDto>(fileEntity);
+                addedFiles.Add(fileDto);
                 postEntity.FilePaths.Add(fileEntity);
             }
             
@@ -85,12 +88,7 @@ namespace MAJServices.Controllers
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            var json = JsonConvert.SerializeObject(addedFiles, Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
-            return Content(json, "application/json");
+            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = idPost },Mapper.Map<PostWithoutUserDto>(postEntity));
         }
 
         //---------------------------Upload User's Profile Image into blob storage------------------------------------//

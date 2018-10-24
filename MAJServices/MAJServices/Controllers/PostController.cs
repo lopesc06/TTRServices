@@ -26,9 +26,14 @@ namespace MAJServices.Controllers
         [HttpGet("post")]
         public IActionResult GetLastPosts()
         {
-            var RecentPosts = _postInfoRepository.GetRecentPosts();
-            var PostsResult = Mapper.Map<List<PostDto>>(RecentPosts);
-            return Ok(PostsResult);
+            var recentPostsEntity = _postInfoRepository.GetRecentPosts();
+            var postsDtoResult = Mapper.Map<List<PostDto>>(recentPostsEntity);
+            foreach(PostDto postDto in postsDtoResult)
+            {
+                var p = _postInfoRepository.GetUserPost(postDto.Publisher.Id, postDto.Id);
+                postDto.FilePaths = Mapper.Map<List<FilePathDto>>(p.FilePaths);
+            }
+            return Ok(postsDtoResult);
         }
 
 //-------------------------Get a post from a user-----------------------------------------//
