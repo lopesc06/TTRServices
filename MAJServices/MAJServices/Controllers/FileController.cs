@@ -68,7 +68,7 @@ namespace MAJServices.Controllers
 
                 //Get a reference to the blob
                 CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName);
-
+                blockBlob.Properties.ContentType = file.ContentType;  //the default is application/octet-stream, which triggers a download in most browsers
                 //Create or overwrite the blob with the contents of a local file
                 using (var filestream = file.OpenReadStream())
                 {
@@ -128,6 +128,7 @@ namespace MAJServices.Controllers
             //Create or overwrite the blob with the contents of a local file
             using (var filestream = file.OpenReadStream())
             {
+
                 await blockBlob.UploadFromStreamAsync(filestream);
             }
             return Json(new
