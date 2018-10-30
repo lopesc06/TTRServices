@@ -99,7 +99,9 @@ namespace MAJServices.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration
+                expiration,
+                departmet = memberOf,
+                role
             });
 
         }

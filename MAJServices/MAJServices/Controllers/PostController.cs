@@ -21,8 +21,9 @@ namespace MAJServices.Controllers
             _postInfoRepository = postInfoRepository;
             _userInfoRepository = userInfoRepository;
         }
-        
+
 //-------------------------Get all Posts from last month-----------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("post")]
         public IActionResult GetLastPosts()
         {
