@@ -95,3 +95,4 @@ C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\ne
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.dll
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.pdb
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csproj.CopyComplete
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csprojAssemblyReference.cache

@@ -8,6 +8,11 @@ namespace MAJServices.Services.Interfaces
 {
     public interface IFileInfoRepository
     {
-        void AddFile(FilePath file);
+        void AddFileToPost(FilePath file);
+        void AddFileToUser(FilePath file);
+        bool SaveFile();
+        Post RetrievePost(int idPost);
+        UserIdentity RetrieveUser(string idUser);
+        void ClearPreviousFiles(int idPost);
     }
 }

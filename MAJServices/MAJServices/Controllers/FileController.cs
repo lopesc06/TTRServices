@@ -2,6 +2,7 @@
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using MAJServices.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,10 +21,10 @@ namespace MAJServices.Controllers
     [Route("api/users")]
     public class FileController : Controller
     {
-        private IPostInfoRepository _postInfoRepository;
-        public FileController(IPostInfoRepository postInfoRepository)
+        private IFileInfoRepository _fileInfoRepository;
+        public FileController(IFileInfoRepository fileInfoRepository)
         {
-            _postInfoRepository = postInfoRepository;
+            _fileInfoRepository = fileInfoRepository;
         }
         
 //---------------------------Upload post's files into blob storage------------------------------------// 
@@ -31,15 +32,16 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/post/{idPost}/files")]
         public async Task<IActionResult> SavePostsFile(string idUser,int idPost,IEnumerable<IFormFile> files)
         {
-            if(!_postInfoRepository.PostExist(idUser, idPost))
+            var postEntity = _fileInfoRepository.RetrievePost(idPost);
+            if (postEntity == null )
             {
                 return NotFound();
             }
-            var postEntity = _postInfoRepository.GetUserPost(idUser, idPost);
             if (files == null || !files.Any()){
                 return BadRequest("files should not be empty");
             }
-
+            _fileInfoRepository.ClearPreviousFiles(idPost);
+            
             //set the connections string
             string storageConnectionString = Environment.GetEnvironmentVariable("AzureBlobStorage");
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
@@ -62,33 +64,33 @@ namespace MAJServices.Controllers
                 await BlobContainer.SetPermissionsAsync(permissions);
             }
 
-            List<FilePathDto> addedFiles = new List<FilePathDto>();
-
-            foreach(IFormFile file in files){
-
+            foreach (IFormFile file in files){
+                
                 //Get a reference to the blob
-                CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName);
-                blockBlob.Properties.ContentType = file.ContentType;  //the default is application/octet-stream, which triggers a download in most browsers
+                CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName.Trim());
+                
+                //The default is application/octet-stream, which triggers a download in most browsers
+                blockBlob.Properties.ContentType = file.ContentType;
+                
                 //Create or overwrite the blob with the contents of a local file
                 using (var filestream = file.OpenReadStream())
                 {
                     await blockBlob.UploadFromStreamAsync(filestream);
                 }
                 var fileEntity = new FilePath{
-                    FileName = blockBlob.Name,
+                    FileName = blockBlob.Name.Trim(),
                     Path = blockBlob.Uri.ToString(),
                     PostId = idPost,
                 };
                 var fileDto = Mapper.Map<FilePathDto>(fileEntity);
-                addedFiles.Add(fileDto);
-                postEntity.FilePaths.Add(fileEntity);
+                _fileInfoRepository.AddFileToPost(fileEntity);
             }
             
-            if (!_postInfoRepository.SavePost())
+            if (!_fileInfoRepository.SaveFile())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = idPost },Mapper.Map<PostWithoutUserDto>(postEntity));
+            return CreatedAtRoute("GetUserPost", new { idUser, idPost },Mapper.Map<PostWithoutUserDto>(postEntity));
         }
 
         //---------------------------Upload User's Profile Image into blob storage------------------------------------//
@@ -96,9 +98,14 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/Image")]
         public async Task<IActionResult> SaveProfileImage(string iduser,IFormFile file)
         {
-            if (file == null)
+            var userEntity = _fileInfoRepository.RetrieveUser(iduser);
+            if(userEntity == null)
             {
-                return BadRequest("files should not be empty");
+                return NotFound();
+            }
+            if (file == null && (file.ContentType!= "image/png" || file.ContentType != "image/jpeg") )
+            {
+                return BadRequest("files should not be empty or png/jpg/jpeg format");
             }
 
             //set the connections string
@@ -123,20 +130,22 @@ namespace MAJServices.Controllers
             }
 
             //Get a reference to the blob
-            CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName);
+            CloudBlockBlob blockBlob = BlobContainer.GetBlockBlobReference(file.FileName.Trim());
+
+            //The default is application/octet-stream, which triggers a download in most browsers
+            blockBlob.Properties.ContentType = file.ContentType;
 
             //Create or overwrite the blob with the contents of a local file
             using (var filestream = file.OpenReadStream())
             {
-
                 await blockBlob.UploadFromStreamAsync(filestream);
             }
-            return Json(new
+            userEntity.UserImageUrl = blockBlob.Uri.ToString();
+            if (!_fileInfoRepository.SaveFile())
             {
-                name = blockBlob.Name,
-                uri = blockBlob.Uri,
-                size = blockBlob.Properties.Length
-            });
+                return StatusCode(500, "A problem happened while handling your request");
+            }
+            return CreatedAtRoute("GetUser", new { id = userEntity.Id }, Mapper.Map<UserWithoutPostsDto>(userEntity));
         }
     }
 }

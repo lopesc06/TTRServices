@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using MAJServices.Services.Interfaces;
+using MAJServices.Services.InterfacesImplementation;
 
 namespace MAJServices
 {
@@ -28,11 +30,12 @@ namespace MAJServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            var connectionString = Environment.GetEnvironmentVariable("AzureDBString");
-            //var connectionString = Environment.GetEnvironmentVariable("LocalDB");
+            //var connectionString = Environment.GetEnvironmentVariable("AzureDBString");
+            var connectionString = Environment.GetEnvironmentVariable("LocalDB");
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
+            services.AddScoped<IFileInfoRepository, FileInfoRepository>();
             services.AddScoped<IDepartmentInfoRepository, DepartmentInfoRepository>();
 
             services.AddIdentity<UserIdentity, RoleIdentity>()

@@ -26,12 +26,13 @@ namespace MAJServices.Services
             user.Posts.Add(post);
         }
 
-        public IEnumerable<Post> GetRecentPosts()
+        public IEnumerable<Post> GetRecentPosts(string dpt)
         {
             var Today = DateTime.Today;
-            var Limit = new DateTime(Today.Year, Today.Month - 1, Today.Day);
+            var Limitday = Today.Day == 31 ? 30 : Today.Day; 
+            var Limit = new DateTime(Today.Year, Today.Month - 1,Limitday);
             var res = _infoContext.Posts.Include(p => p.Publisher).Include(p => p.FilePaths)
-                .Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit)
+                .Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit && p.Publisher.DepartmentAcronym.Contains(dpt))
                 .OrderByDescending(p => p.ReleaseDate).ToList();
             return res;
         }
@@ -52,7 +53,7 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
-        public bool PostExist(string idUser, int idPost)
+        public bool PostExists(string idUser, int idPost)
         {
             return _infoContext.Posts.Any(p => p.Id == idPost && p.UserId == idUser);
         }

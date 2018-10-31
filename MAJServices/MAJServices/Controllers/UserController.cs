@@ -46,8 +46,9 @@ namespace MAJServices.Controllers
                 {
                     var user = users.FirstOrDefault(u => u.Id == r.Id);
                     var userRole =await _userManager.GetRolesAsync(user);
-                    if (userRole.Count > 0)
-                        r.Role = userRole.First();
+                    r.Role = userRole.Count > 0 ? userRole.First() : null;
+                    //if (userRole.Count > 0)
+                    //    r.Role = userRole.First();
                     r.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
                 }
             }
@@ -58,8 +59,9 @@ namespace MAJServices.Controllers
                 {
                     var user = users.FirstOrDefault(u => u.Id == r.Id);
                     var userRole = await _userManager.GetRolesAsync(user);
-                    if (userRole.Count > 0)
-                        r.Role = userRole.First();
+                    r.Role = userRole.Count > 0 ? userRole.First() : null;
+                    //if (userRole.Count > 0)
+                    //    r.Role = userRole.First();
                 }
             }
             return Ok(result);
@@ -95,7 +97,7 @@ namespace MAJServices.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(string id)
         {
-            if (!_userInfoRepository.UserExist(id))
+            if (!_userInfoRepository.UserExists(id))
             {
                 return NotFound();
             }
@@ -116,7 +118,7 @@ namespace MAJServices.Controllers
         [HttpPut("userupdate/{id}")]
         public async Task<IActionResult> UserUpdateAsync(string id, [FromBody]UserForUpdateDto userUpdate)
         {
-            if (!_userInfoRepository.UserExist(id))
+            if (!_userInfoRepository.UserExists(id))
             {
                 return NotFound();
             }
@@ -150,7 +152,7 @@ namespace MAJServices.Controllers
         [HttpPatch("userupdate/{id}")]
         public async Task<IActionResult> PartialUserUpdateAsync(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
         {
-            if (!_userInfoRepository.UserExist(id))
+            if (!_userInfoRepository.UserExists(id))
             {
                 return NotFound("User's Id does not exist");
             }

@@ -30,7 +30,9 @@ namespace MAJServices.Services
             if (includePosts)
             {
                 var user = _infoContext.Users.Include(u=>u.Posts).ThenInclude(p=>p.FilePaths)
-                    .Where(u => u.Id == id).FirstOrDefault();
+                    .Where(u => u.Id == id)
+                    //.OrderByDescending(p => p.Posts.OrderByDescending( pt=> pt.ReleaseDate).FirstOrDefault())
+                    .FirstOrDefault();
             }
             return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
         }
@@ -41,7 +43,9 @@ namespace MAJServices.Services
             {
 
                return _infoContext.Users.Include(u => u.Posts).ThenInclude(p => p.FilePaths)
-                    .OrderBy( u => u.Name).ThenBy( u => u.LastName).ToList();
+                    .OrderBy( u => u.Name).ThenBy( u => u.LastName)
+                    //.ThenByDescending(p => p.Posts.OrderByDescending(pt => pt.ReleaseDate).FirstOrDefault())
+                    .ToList();
             }
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
         }
@@ -51,7 +55,7 @@ namespace MAJServices.Services
             return (_infoContext.SaveChanges() >= 0);
         }
 
-        public bool UserExist(string Id)
+        public bool UserExists(string Id)
         {
             return _infoContext.Users.Any(u => u.Id == Id);
         }

@@ -25,9 +25,9 @@ namespace MAJServices.Controllers
 //-------------------------Get all Posts from last month-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("post")]
-        public IActionResult GetLastPosts()
+        public IActionResult GetLastPosts(string dpt="")
         {
-            var recentPostsEntity = _postInfoRepository.GetRecentPosts();
+            var recentPostsEntity = _postInfoRepository.GetRecentPosts(dpt);
             var postsDtoResult = Mapper.Map<List<PostDto>>(recentPostsEntity);
             foreach(PostDto postDto in postsDtoResult)
             {
@@ -41,7 +41,7 @@ namespace MAJServices.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpGet("{iduser}/post/{idPost}", Name ="GetUserPost")]
         public IActionResult GetUserPost(string idUser, int idPost){
-            if (!_postInfoRepository.PostExist(idUser, idPost))
+            if (!_postInfoRepository.PostExists(idUser, idPost))
             {
                 return NotFound();
             }
@@ -59,7 +59,7 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/post")]
         public IActionResult AddUserPost(string idUser, [FromBody]PostForCreationDto postForCreationDto)
         {
-            if (!_userInfoRepository.UserExist(idUser))
+            if (!_userInfoRepository.UserExists(idUser))
             {
                 return NotFound();
             }
@@ -88,7 +88,7 @@ namespace MAJServices.Controllers
         [HttpDelete("{iduser}/post/{idpost}")]
         public IActionResult DeleteUserPost(string idUser, int idPost)
         {
-            if (!_postInfoRepository.PostExist(idUser, idPost))
+            if (!_postInfoRepository.PostExists(idUser, idPost))
             {
                 return NotFound();
             }
@@ -110,7 +110,7 @@ namespace MAJServices.Controllers
         [HttpPatch("{iduser}/post/{idpost}")]
         public IActionResult PatchUserPost(string idUser , int idPost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {
-            if (!_postInfoRepository.PostExist(idUser,idPost))
+            if (!_postInfoRepository.PostExists(idUser,idPost))
             {
                 return NotFound();
             }
