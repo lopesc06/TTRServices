@@ -19,12 +19,22 @@ namespace MAJServices.Services
         {
             _infoContext.Users.Add(user);
         }
-        
+
+        public void AddUserSubscription(UserSubscription subscription)
+        {
+            _infoContext.Subscriptions.Add(subscription);
+        }
+
         public void DeleteUser(UserIdentity user)
         {
             _infoContext.Users.Remove(user);
         }
-        
+
+        public void DeleteUserSubscription(UserSubscription subscription)
+        {
+            _infoContext.Subscriptions.Remove(subscription);
+        }
+
         public UserIdentity GetUser(string id, bool includePosts)
         {
             if (includePosts)
@@ -48,6 +58,11 @@ namespace MAJServices.Services
                     .ToList();
             }
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
+        }
+
+        public IEnumerable<UserSubscription> GetUserSubscription(string id)
+        {
+            return _infoContext.Subscriptions.Where(u => u.UserId == id).ToList();
         }
 
         public bool SaveUser()

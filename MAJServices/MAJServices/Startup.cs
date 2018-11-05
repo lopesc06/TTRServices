@@ -13,6 +13,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using MAJServices.Services.Interfaces;
 using MAJServices.Services.InterfacesImplementation;
+using MAJServices.Models.User;
 
 namespace MAJServices
 {
@@ -88,6 +89,12 @@ namespace MAJServices
                 cfg.CreateMap<Post, PostDto>();
                 cfg.CreateMap<Post, PostWithoutUserDto>();
                 cfg.CreateMap<PostForUpdateDto, Post>();
+                cfg.CreateMap<UserSubscriptionDto, UserSubscription>()
+                   .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                   .ForMember(dest => dest.DepartmentAcronym, opt => opt.MapFrom(src => src.DepartmentName));
+                cfg.CreateMap<UserSubscription, UserSubscriptionDto>()
+                   .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.DepartmentAcronym))
+                   .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
             });
             app.UseMvc();
         }

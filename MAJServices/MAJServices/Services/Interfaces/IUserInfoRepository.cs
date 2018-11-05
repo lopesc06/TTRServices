@@ -7,6 +7,9 @@ namespace MAJServices.Services
     public interface IUserInfoRepository
     {
         void AddUser(UserIdentity user);
+        void AddUserSubscription(UserSubscription subscription);
+        IEnumerable<UserSubscription> GetUserSubscription(string id);
+        void DeleteUserSubscription(UserSubscription subscription);
         void DeleteUser(UserIdentity user);
         bool UserExists(string id);
         UserIdentity GetUser(string Id, bool includePosts);

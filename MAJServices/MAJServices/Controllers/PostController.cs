@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MAJServices.Entities;
+using MAJServices.Helpers;
 using MAJServices.Models;
 using MAJServices.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
 {
@@ -57,20 +60,18 @@ namespace MAJServices.Controllers
 //-------------------------Add post from a user-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/post")]
-        public IActionResult AddUserPost(string idUser, [FromBody]PostForCreationDto postForCreationDto)
+        public async Task<IActionResult> AddUserPostAsync(string idUser, [FromBody]PostForCreationDto postForCreationDto)
         {
-            if (!_userInfoRepository.UserExists(idUser))
+            var publisher = _userInfoRepository.GetUser(idUser,false);
+            if (publisher == null)
             {
                 return NotFound();
             }
-            if (postForCreationDto == null)
+            if (postForCreationDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            
             var CreatePost = Mapper.Map<Post>(postForCreationDto);
             _postInfoRepository.AddUserPost(idUser, CreatePost);
 
@@ -79,8 +80,8 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             var CreatedPost = Mapper.Map<PostWithoutUserDto>(CreatePost);
-            //await new PushNotificationController().SendPushNotification(CreatedPost);
-            return CreatedAtRoute("GetUserPost", new { idUser = idUser, idPost = CreatePost.Id }, CreatedPost);
+            await PushNotification.SendPush(CreatedPost,publisher.DepartmentAcronym);
+            return CreatedAtRoute("GetUserPost", new { idUser, idPost = CreatePost.Id }, CreatedPost);
         }
         
 //-------------------------Delete post from a user-----------------------------------------//
