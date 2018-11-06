@@ -14,10 +14,12 @@ namespace MAJServices.Controllers
     public class SubscriptionController : Controller
     {
         private IUserInfoRepository _userInfoRepository;
+        private IDepartmentInfoRepository _departmentInfoRepository;
 
-        public SubscriptionController(IUserInfoRepository userInfoRepository)
+        public SubscriptionController(IUserInfoRepository userInfoRepository, IDepartmentInfoRepository departmentInfoRepository)
         {
             _userInfoRepository = userInfoRepository;
+            _departmentInfoRepository = departmentInfoRepository;
         }
 
         [HttpPost("{iduser}/subscriptions")]
@@ -32,16 +34,22 @@ namespace MAJServices.Controllers
                 return BadRequest();
             }
 
-            var suscriptionsEntity = Mapper.Map<IEnumerable<UserSubscription>>(subscriptionsDto);
-            foreach(UserSubscription suscription in suscriptionsEntity)
+            var subscriptionsInDb = _userInfoRepository.GetUserSubscription(iduser);
+            var subscriptionsEntity = Mapper.Map<IEnumerable<UserSubscription>>(subscriptionsDto);
+            var subscriptionsNotInDb = subscriptionsEntity
+                .Where(s => !subscriptionsInDb.Select(q=>q.DepartmentAcronym.ToUpper()).Contains(s.DepartmentAcronym.ToUpper()));
+            foreach (UserSubscription subscription in subscriptionsNotInDb)
             {
-                _userInfoRepository.AddUserSubscription(suscription);
+                subscription.DepartmentAcronym = subscription.DepartmentAcronym.ToUpper();
+                if(_departmentInfoRepository.DepartmentExists(subscription.DepartmentAcronym))
+                    _userInfoRepository.AddUserSubscription(subscription);
             }
             if (!_userInfoRepository.SaveUser())
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
-            return NoContent();
+            return Ok(subscriptionsNotInDb);
+            
         }
 
         [HttpGet("{iduser}/subscriptions")]
@@ -78,6 +86,19 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             return NoContent();
+            
+            //var subscriptionsInDb = _userInfoRepository.GetUserSubscription(iduser);
+            //var subscriptionsEntity = Mapper.Map<IEnumerable<UserSubscription>>(subscriptionsDto);
+            //var subscriptionsToRemove = subscriptionsEntity
+            //    .Where(s => subscriptionsInDb.Select(q => q.DepartmentAcronym.ToUpper()).Contains(s.DepartmentAcronym.ToUpper()));
+            //foreach (UserSubscription subscription in subscriptionsToRemove)
+            //{
+            //    _userInfoRepository.DeleteUserSubscription(subscription);
+            //}
+            //if (!_userInfoRepository.SaveUser())
+            //{
+            //    return StatusCode(500, "A problem happened while handling your request");
+            //}
         }
 
     }

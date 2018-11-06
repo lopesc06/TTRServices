@@ -32,7 +32,7 @@ namespace MAJServices.Services
 
         public void DeleteUserSubscription(UserSubscription subscription)
         {
-            _infoContext.Subscriptions.Remove(subscription);
+            _infoContext.Subscriptions.RemoveRange(subscription);
         }
 
         public UserIdentity GetUser(string id, bool includePosts)
