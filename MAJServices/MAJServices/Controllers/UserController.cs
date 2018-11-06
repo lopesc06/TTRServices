@@ -174,7 +174,7 @@ namespace MAJServices.Controllers
                 return BadRequest(ModelState);
             }
             Mapper.Map(UserToPatch, UserEntity);
-            if (!_departmentInfoRepository.DepartmentExists(UserEntity.DepartmentAcronym))
+            if (!_departmentInfoRepository.DepartmentExists(UserEntity.DepartmentAcronym) && UserEntity.DepartmentAcronym != null)
             {
                 return NotFound("Department Acronym does not exist");
             }
