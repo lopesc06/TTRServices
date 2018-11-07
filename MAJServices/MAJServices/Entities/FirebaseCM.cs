@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace MAJServices.Entities
 {
-    public class UserSubscription
+    public class FirebaseCM
     {
         //PK Compound PK defined in modelbuilder
-        [Column("DepartmentId")]
-        [ForeignKey("DepartmentAcronym")]
-        public string DepartmentAcronym { get; set; }
-
-        //PK
         [ForeignKey("UserId")]
         public string UserId { get; set; }
 
+        //PK Compound PK defined in modelbuilder
+        [MaxLength(250)]
+        public string DeviceId { get; set; }
+        
+        [Required]
+        [MaxLength(250)]
+        public string Token { get; set; }
+
         public UserIdentity User { get; set; }
-        public Department Department { get; set; }
+
     }
 }

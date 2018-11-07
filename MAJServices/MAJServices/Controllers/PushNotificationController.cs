@@ -1,4 +1,9 @@
-﻿using MAJServices.Models;
+﻿using AutoMapper;
+using MAJServices.Entities;
+using MAJServices.Models;
+using MAJServices.Models.FirebaseCM;
+using MAJServices.Services;
+using MAJServices.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -9,10 +14,17 @@ using System.Threading.Tasks;
 
 namespace MAJServices.Controllers
 {
-    [Route("api/push")]
-    public class PushNotificationController
+    [Route("api/users")]
+    public class PushNotificationController : Controller
     {
-        [Route("send")]
+        private IFirebaseCMInfoRepository _firebaseInfoRepository;
+
+        public PushNotificationController(IFirebaseCMInfoRepository firebaseInfoRepository)
+        {
+            _firebaseInfoRepository = firebaseInfoRepository;
+        }
+
+        [HttpGet("fcm/sendpush")]
         public async Task<bool> SendPushNotification(PostWithoutUserDto post,string topic = null )
         {
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
@@ -45,5 +57,34 @@ namespace MAJServices.Controllers
             }
             return true;
         }
+
+        [HttpPost("fcm/token")]
+        public IActionResult AddTokenToDevice([FromBody]FirebaseCMForCreationDto FCMForCreationDto)
+        {
+            if (FCMForCreationDto == null || !ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_firebaseInfoRepository.UserExists(FCMForCreationDto.UserId))
+            {
+                return NotFound("UserId not found");
+            }
+
+            var entityResult = _firebaseInfoRepository.GetUserDevice(FCMForCreationDto.UserId, FCMForCreationDto.DeviceId);
+            if (entityResult == null )
+            {
+                var FCMEntity = Mapper.Map<FirebaseCM>(FCMForCreationDto);
+                _firebaseInfoRepository.AddTokenToDeviceId(FCMEntity);
+                if (!_firebaseInfoRepository.SaveToken())
+                {
+                    return StatusCode(500, "A problem happened while handling your request");
+                }
+                return Ok();
+            }
+            entityResult.Token = FCMForCreationDto.Token;
+            _firebaseInfoRepository.SaveToken();
+            return Ok();
+        }
+
     }
 }

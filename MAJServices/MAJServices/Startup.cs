@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using MAJServices.Services.Interfaces;
 using MAJServices.Services.InterfacesImplementation;
 using MAJServices.Models.User;
+using MAJServices.Models.FirebaseCM;
 
 namespace MAJServices
 {
@@ -31,12 +32,14 @@ namespace MAJServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            var connectionString = Environment.GetEnvironmentVariable("AzureDBString");
+            //var connectionString = Environment.GetEnvironmentVariable("AzureDBString");
             //var connectionString = Environment.GetEnvironmentVariable("LocalDB");
+            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
             services.AddScoped<IPostInfoRepository, PostInfoRepository>();
             services.AddScoped<IFileInfoRepository, FileInfoRepository>();
+            services.AddScoped<IFirebaseCMInfoRepository,FirebaseCMInfoRepository>();
             services.AddScoped<IDepartmentInfoRepository, DepartmentInfoRepository>();
 
             services.AddIdentity<UserIdentity, RoleIdentity>()
@@ -95,6 +98,7 @@ namespace MAJServices
                 cfg.CreateMap<UserSubscription, UserSubscriptionDto>()
                    .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.DepartmentAcronym))
                    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+                cfg.CreateMap<FirebaseCMForCreationDto, FirebaseCM>();
             });
             app.UseMvc();
         }

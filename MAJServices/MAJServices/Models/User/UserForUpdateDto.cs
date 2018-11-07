@@ -5,11 +5,11 @@ namespace MAJServices.Models
     public class UserForUpdateDto
     {
         [Required(ErrorMessage ="This field should not be empty")]
-        [MaxLength(30)]
+        [StringLength(30)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "This field should not be empty")]
-        [MaxLength(40)]
+        [StringLength(40)]
         public string LastName { get; set; }
 
         [StringLength(35)]

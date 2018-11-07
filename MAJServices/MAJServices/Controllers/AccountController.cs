@@ -34,16 +34,12 @@ namespace MAJServices.Controllers
             this._configuration = configuration;
         }
 
-//----------------------------Add a new user and return token--------------------------------------------//
+//--------------------------------------Add a new user --------------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserForCreationDto userDto)
         {
-            if (userDto == null)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
+            if (userDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -75,7 +71,7 @@ namespace MAJServices.Controllers
             var memberOf = userInfo.DepartmentAcronym ?? "None";
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id),
                 new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
                 new Claim("name",userInfo.Name),
                 new Claim("department",memberOf),
@@ -146,7 +142,7 @@ namespace MAJServices.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError("Login Failure", "Invalid login attempt.");
                     return BadRequest(ModelState);
                 }
             }
