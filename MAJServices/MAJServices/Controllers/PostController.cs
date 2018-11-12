@@ -67,6 +67,10 @@ namespace MAJServices.Controllers
             {
                 return NotFound();
             }
+            if(publisher.DepartmentAcronym == null)
+            {
+                return StatusCode(400, "User not assigned to a department");
+            }
             if (postForCreationDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -74,7 +78,6 @@ namespace MAJServices.Controllers
             
             var CreatePost = Mapper.Map<Post>(postForCreationDto);
             _postInfoRepository.AddUserPost(idUser, CreatePost);
-
             if (!_postInfoRepository.SavePost())
             {
                 return StatusCode(500, "A problem happened while handling your request");

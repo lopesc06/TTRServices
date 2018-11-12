@@ -37,7 +37,9 @@ namespace MAJServices.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetUsersAsync(bool includePosts = false)
         {
-            var users = _userInfoRepository.GetUsers(includePosts);
+            bool isSuperadmin = User.FindFirst("department").Value.ToUpperInvariant().Equals("SUPERADMIN");
+            var department = isSuperadmin ? "" : User.FindFirst("department").Value;
+            var users = _userInfoRepository.GetUsers(includePosts, department);
             IEnumerable result;
             if (includePosts)
             {
@@ -193,10 +195,10 @@ namespace MAJServices.Controllers
                     return StatusCode(500, "A problem happened while Updating User's Role request");
                 }
             }
-            else
-            {
-                return NotFound("Specified User's role to patch does not exists"); 
-            }
+            //else
+            //{
+            //    return NotFound("Specified User's role to patch does not exists"); 
+            //}
             return NoContent();
         }
     }

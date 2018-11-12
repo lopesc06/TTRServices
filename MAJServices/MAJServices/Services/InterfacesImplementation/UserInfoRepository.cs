@@ -47,17 +47,19 @@ namespace MAJServices.Services
             return _infoContext.Users.Where(u => u.Id == id).FirstOrDefault();
         }
         
-        public IEnumerable<UserIdentity> GetUsers(bool IncludePosts)
+        public IEnumerable<UserIdentity> GetUsers(bool IncludePosts,string department)
         {
             if (IncludePosts)
             {
 
                return _infoContext.Users.Include(u => u.Posts).ThenInclude(p => p.FilePaths)
                     .OrderBy( u => u.Name).ThenBy( u => u.LastName)
+                    .Where(u => u.DepartmentAcronym.Contains(department))
                     //.ThenByDescending(p => p.Posts.OrderByDescending(pt => pt.ReleaseDate).FirstOrDefault())
                     .ToList();
             }
-            return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName).ToList();
+            return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName)
+                    .Where(u => u.DepartmentAcronym.Contains(department)).ToList();
         }
 
         public IEnumerable<UserSubscription> GetUserSubscription(string id)

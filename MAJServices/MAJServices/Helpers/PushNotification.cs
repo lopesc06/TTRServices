@@ -16,7 +16,7 @@ namespace MAJServices.Helpers
         {
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
-            var destination = "/topics/" + department;
+            var destination = "/topics/" + department.ToUpper();
 
             using (var client = new HttpClient())
             {

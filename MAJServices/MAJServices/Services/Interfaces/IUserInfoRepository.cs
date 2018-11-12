@@ -13,7 +13,7 @@ namespace MAJServices.Services
         void DeleteUser(UserIdentity user);
         bool UserExists(string id);
         UserIdentity GetUser(string Id, bool includePosts);
-        IEnumerable<UserIdentity> GetUsers(bool includePosts);
+        IEnumerable<UserIdentity> GetUsers(bool includePosts, string department);
         bool SaveUser();
     }
 }
