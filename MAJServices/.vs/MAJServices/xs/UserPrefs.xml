@@ -1,9 +1,9 @@
 ﻿<Properties StartupConfiguration="{5A383D5B-E19F-449A-9128-22BFFE6E8D22}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="MAJServices/Controllers/UserController.cs">
     <Files>
-      <File FileName="MAJServices/Startup.cs" Line="49" Column="43" />
-      <File FileName="MAJServices/Controllers/FileController.cs" Line="71" Column="85" />
-      <File FileName="MAJServices/Controllers/UserController.cs" Line="1" Column="1" />
+      <File FileName="MAJServices/Controllers/UserController.cs" Line="70" Column="53" />
+      <File FileName="MAJServices/Services/Interfaces/IUserInfoRepository.cs" Line="16" Column="39" />
+      <File FileName="MAJServices/Services/InterfacesImplementation/UserInfoRepository.cs" Line="63" Column="98" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

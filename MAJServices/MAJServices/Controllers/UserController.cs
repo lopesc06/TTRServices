@@ -21,7 +21,7 @@ namespace MAJServices.Controllers
         private readonly IUserInfoRepository _userInfoRepository;
         private readonly RoleManager<RoleIdentity> _roleManager;
         private readonly UserManager<UserIdentity> _userManager;
-        private IDepartmentInfoRepository _departmentInfoRepository;
+        private readonly IDepartmentInfoRepository _departmentInfoRepository;
 
         public UserController(IUserInfoRepository userInfoRepository, UserManager<UserIdentity> userManager
             , RoleManager<RoleIdentity> roleManager, IDepartmentInfoRepository departmentInfoRepository)
@@ -39,34 +39,41 @@ namespace MAJServices.Controllers
         {
             bool isSuperadmin = User.FindFirst("department").Value.ToUpperInvariant().Equals("SUPERADMIN");
             var department = isSuperadmin ? "" : User.FindFirst("department").Value;
-            var users = _userInfoRepository.GetUsers(includePosts, department);
-            IEnumerable result;
+            var usersEntity = _userInfoRepository.GetUsers(includePosts, department);
+            IEnumerable usersDto;
+            List<UserDto> resultWithPosts = new List<UserDto>();
+            List<UserWithoutPostsDto> resultWithoutPosts = new List<UserWithoutPostsDto>();
             if (includePosts)
             {
-                result = Mapper.Map<IEnumerable<UserDto>>(users);
-                foreach (UserDto r in result)
+                usersDto = Mapper.Map<IEnumerable<UserDto>>(usersEntity);
+                foreach (UserDto r in usersDto)
                 {
-                    var user = users.FirstOrDefault(u => u.Id == r.Id);
+                    var user = usersEntity.FirstOrDefault(u => u.Id == r.Id);
                     var userRole =await _userManager.GetRolesAsync(user);
                     r.Role = userRole.Count > 0 ? userRole.First() : null;
-                    //if (userRole.Count > 0)
-                    //    r.Role = userRole.First();
-                    r.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
+                    if (r.Role.ToUpper() != "GENERAL"){
+                        r.UserPosts = Mapper.Map<List<PostWithoutUserDto>>(user.Posts);
+                        resultWithPosts.Add(r);
+                    }
+
                 }
+                return Ok(resultWithPosts);
             }
             else
             {
-                result = Mapper.Map<IEnumerable<UserWithoutPostsDto>>(users);
-                foreach (UserWithoutPostsDto r in result)
+                usersDto = Mapper.Map<IEnumerable<UserWithoutPostsDto>>(usersEntity);
+                foreach (UserWithoutPostsDto r in usersDto)
                 {
-                    var user = users.FirstOrDefault(u => u.Id == r.Id);
+                    var user = usersEntity.FirstOrDefault(u => u.Id == r.Id);
                     var userRole = await _userManager.GetRolesAsync(user);
                     r.Role = userRole.Count > 0 ? userRole.First() : null;
-                    //if (userRole.Count > 0)
-                    //    r.Role = userRole.First();
+                    if (r.Role.ToUpper() != "GENERAL")
+                    {
+                        resultWithoutPosts.Add(r);
+                    }
                 }
+                return Ok(resultWithoutPosts);
             }
-            return Ok(result);
         }
 
 //----------------Get User with or without user's posts------------------------------------------------------//

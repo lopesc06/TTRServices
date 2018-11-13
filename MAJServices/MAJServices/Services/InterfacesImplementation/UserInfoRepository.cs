@@ -55,12 +55,13 @@ namespace MAJServices.Services
 
                return _infoContext.Users.Include(u => u.Posts).ThenInclude(p => p.FilePaths)
                     .OrderBy( u => u.Name).ThenBy( u => u.LastName)
-                    .Where(u => u.DepartmentAcronym.Contains(department))
+                    .Where(u => u.DepartmentAcronym.Contains(department) && u.isActive)
                     //.ThenByDescending(p => p.Posts.OrderByDescending(pt => pt.ReleaseDate).FirstOrDefault())
                     .ToList();
             }
             return _infoContext.Users.OrderBy(u => u.Name).ThenBy(u => u.LastName)
-                    .Where(u => u.DepartmentAcronym.Contains(department)).ToList();
+                               .Where(u => u.DepartmentAcronym.Contains(department) && u.isActive)
+                               .ToList();
         }
 
         public IEnumerable<UserSubscription> GetUserSubscription(string id)
