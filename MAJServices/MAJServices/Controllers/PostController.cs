@@ -77,6 +77,7 @@ namespace MAJServices.Controllers
             }
             
             var CreatePost = Mapper.Map<Post>(postForCreationDto);
+            CreatePost.Department = publisher.DepartmentAcronym;
             _postInfoRepository.AddUserPost(idUser, CreatePost);
             if (!_postInfoRepository.SavePost())
             {

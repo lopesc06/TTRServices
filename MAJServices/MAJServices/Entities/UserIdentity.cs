@@ -19,6 +19,8 @@ namespace MAJServices.Entities
 
         public string UserImageUrl { get; set; }
 
+        public bool isActive { get; set; } = true;
+
         public ICollection<Post> Posts { get; set; } = new List<Post>();
 
         [ForeignKey("DepartmentAcronym")]

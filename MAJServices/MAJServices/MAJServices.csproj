@@ -10,6 +10,8 @@
     <Compile Remove="Migrations\20181105053918_UserSubscription.Designer.cs" />
     <Compile Remove="Migrations\20181107063940_FirebaseTokenTable.cs" />
     <Compile Remove="Migrations\20181107063940_FirebaseTokenTable.Designer.cs" />
+    <Compile Remove="Migrations\20181113035037_FKPostswithUsersBugFix.cs" />
+    <Compile Remove="Migrations\20181113035037_FKPostswithUsersBugFix.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

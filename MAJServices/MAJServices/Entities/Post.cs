@@ -32,6 +32,11 @@ namespace MAJServices.Entities
 
         public ICollection<FilePath> FilePaths { get; set; } = new List<FilePath>();
 
+        [Required]
+        [ForeignKey("DepartmentAcronym")]
+        [Column("DepartmentId")]
+        public string Department { get; set; }
+
         [ForeignKey("UserId")]
         public UserIdentity Publisher { get; set; }
         [Required]

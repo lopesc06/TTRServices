@@ -27,7 +27,8 @@ namespace MAJServices.Services
 
         public void DeleteUser(UserIdentity user)
         {
-            _infoContext.Users.Remove(user);
+            var userToDelete = _infoContext.Users.Where(u => u.Id == user.Id).FirstOrDefault();
+            userToDelete.isActive = false;
         }
 
         public void DeleteUserSubscription(UserSubscription subscription)
