@@ -12,11 +12,11 @@ namespace MAJServices.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(150)]
         public string Title { get; set; }
 
         [Required]
-        [Column(TypeName = "Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
 
         [Required]
@@ -27,7 +27,7 @@ namespace MAJServices.Entities
         public DateTime EndDate { get; set; }
 
         [Required]
-        [MaxLength(250)]
+        [MaxLength(2000)]
         public string Description { get; set; }
 
         public ICollection<FilePath> FilePaths { get; set; } = new List<FilePath>();

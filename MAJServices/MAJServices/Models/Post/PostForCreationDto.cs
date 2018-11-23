@@ -24,7 +24,7 @@ namespace MAJServices.Models
         public DateTime EndDate { get; set; }
 
         [Required]
-        [MaxLength(200)]
+        [MaxLength(2000)]
         public string Description { get; set; }
     }
 }

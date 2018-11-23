@@ -110,6 +110,11 @@ namespace MAJServices.Entities
                  {
                      Name = "Departamento de Extensión y Apoyos Educativos",
                      DepartmentAcronym = "DEAE"
+                 },
+                 new Department
+                 {
+                     Name = "SUPERADMIN",
+                     DepartmentAcronym = "SUPERADMIN"
                  });
         }
 

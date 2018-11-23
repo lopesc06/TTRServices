@@ -29,8 +29,10 @@ namespace MAJServices.Services
         public IEnumerable<Post> GetRecentPosts(string dpt)
         {
             var Today = DateTime.Today;
+            Today = Today.Add(DateTime.Now.TimeOfDay);
             var Limitday = Today.Day == 31 ? 30 : Today.Day; 
             var Limit = new DateTime(Today.Year, Today.Month - 1,Limitday);
+            Limit = Limit.Add(DateTime.Now.TimeOfDay);
             var res = _infoContext.Posts.Include(p => p.Publisher).Include(p => p.FilePaths)
                 .Where(p => p.ReleaseDate <= Today && p.ReleaseDate >= Limit && p.Publisher.DepartmentAcronym.Contains(dpt))
                 .OrderByDescending(p => p.ReleaseDate).ToList();

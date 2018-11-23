@@ -25,11 +25,11 @@ namespace MAJServices.Controllers
         }
 
         [HttpGet("fcm/sendpush")]
-        public async Task<bool> SendPushNotification(PostWithoutUserDto post,string topic = null )
+        public async Task<bool> SendPushNotification()
         {
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
-            var destination = "/topics/"+topic;
+            var destination = "/topics/"+"CATT";
 
             using (var client = new HttpClient())
             {
@@ -41,15 +41,13 @@ namespace MAJServices.Controllers
                 var data = new
                 {
                     to = destination,
-                    notification = new
+                    data = new
                     {
-                        body = "Este es un mensaje de prueba "+topic ,
-                        title = "notificacion para los interesados de "+topic ,
-                        icon = "myicon",
-                        color = "#FFC300"
+                        body = "Este es un body mediante data",
+                        title = "Este es un title mediante data ",
+                        extra = "Este es un campo extra mediante data"
                     },
                     priority = "high"
-
                 };
                 var json = JsonConvert.SerializeObject(data);
                 var httpContent = new StringContent(json, Encoding.UTF8, "application/json");

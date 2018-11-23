@@ -12,6 +12,10 @@
     <Compile Remove="Migrations\20181107063940_FirebaseTokenTable.Designer.cs" />
     <Compile Remove="Migrations\20181113035037_FKPostswithUsersBugFix.cs" />
     <Compile Remove="Migrations\20181113035037_FKPostswithUsersBugFix.Designer.cs" />
+    <Compile Remove="Migrations\20181116053102_Datetime.cs" />
+    <Compile Remove="Migrations\20181116053102_Datetime.Designer.cs" />
+    <Compile Remove="Migrations\20181123032237_ReleaseDatetimeAndTextLenght.cs" />
+    <Compile Remove="Migrations\20181123032237_ReleaseDatetimeAndTextLenght.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

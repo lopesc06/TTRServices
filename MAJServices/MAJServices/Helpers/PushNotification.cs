@@ -25,19 +25,17 @@ namespace MAJServices.Helpers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={applicationID}");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={senderId}");
-                var data = new
+                var FcmMessage = new
                 {
                     to = destination,
                     notification = new
                     {
                         body = post.Description,
-                        title =department+":"+post.Title,
-                       // icon = "myicon",
-                       // color = "#FFC300"
+                        title = department + ":" + post.Title
                     },
                     priority = "normal"
                 };
-                var json = JsonConvert.SerializeObject(data);
+                var json = JsonConvert.SerializeObject(FcmMessage);
                 var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
                 var result = await client.PostAsync("/fcm/send", httpContent);
             }
