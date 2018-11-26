@@ -49,7 +49,6 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             return Ok(subscriptionsNotInDb);
-            
         }
 
         [HttpGet("{iduser}/subscriptions")]

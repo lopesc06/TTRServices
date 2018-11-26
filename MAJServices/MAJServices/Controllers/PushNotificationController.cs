@@ -7,6 +7,7 @@ using MAJServices.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -24,13 +25,13 @@ namespace MAJServices.Controllers
             _firebaseInfoRepository = firebaseInfoRepository;
         }
 
-        [HttpGet("fcm/sendpush")]
-        public async Task<bool> SendPushNotification()
+        [HttpPost("fcm/sendpush")]
+        public async Task SendPushNotification([FromBody]IEnumerable<NotificationForCreationDto> notifications)
         {
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
-            var destination = "/topics/"+"CATT";
-
+            string message = "", title= "";
+            List<string> usersId = new List<string>();
             using (var client = new HttpClient())
             {
                 //do something with http client
@@ -38,22 +39,30 @@ namespace MAJServices.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={applicationID}");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={senderId}");
-                var data = new
+                foreach(NotificationForCreationDto n in notifications)
                 {
-                    to = destination,
-                    data = new
+                    title = n.Title;
+                    message = n.Message;
+                    usersId.Add(n.UserId);
+                }
+                var userDevices = _firebaseInfoRepository.GetUserTokensDevices(usersId);
+                foreach (string Token in userDevices)
+                {
+                    var data = new
                     {
-                        body = "Este es un body mediante data",
-                        title = "Este es un title mediante data ",
-                        extra = "Este es un campo extra mediante data"
-                    },
-                    priority = "high"
-                };
-                var json = JsonConvert.SerializeObject(data);
-                var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync("/fcm/send", httpContent);
+                        to = Token,
+                        notification = new
+                        {
+                            body = message,
+                            title
+                        },
+                        priority = "high"
+                    };
+                    var json = JsonConvert.SerializeObject(data);
+                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                    await client.PostAsync("/fcm/send", httpContent);
+                }
             }
-            return true;
         }
 
         [HttpPost("fcm/token")]
@@ -68,7 +77,7 @@ namespace MAJServices.Controllers
                 return NotFound("UserId not found");
             }
 
-            var entityResult = _firebaseInfoRepository.GetUserDevice(FCMForCreationDto.UserId, FCMForCreationDto.DeviceId);
+            var entityResult = _firebaseInfoRepository.GetUserDevice(FCMForCreationDto.DeviceId);
             if (entityResult == null )
             {
                 var FCMEntity = Mapper.Map<FirebaseCM>(FCMForCreationDto);
@@ -80,6 +89,7 @@ namespace MAJServices.Controllers
                 return Ok();
             }
             entityResult.Token = FCMForCreationDto.Token;
+            entityResult.UserId = FCMForCreationDto.UserId;
             _firebaseInfoRepository.SaveToken();
             return Ok();
         }

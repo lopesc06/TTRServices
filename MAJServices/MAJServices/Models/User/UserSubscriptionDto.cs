@@ -13,9 +13,5 @@ namespace MAJServices.Models.User
 
         [Required]
         public string UserId { get; set; }
-
-        //public UserWithoutPostsDto User { get; set; }
-
-        //public DepartmentDto Department { get; set; }
     }
 }

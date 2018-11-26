@@ -16,6 +16,8 @@
     <Compile Remove="Migrations\20181116053102_Datetime.Designer.cs" />
     <Compile Remove="Migrations\20181123032237_ReleaseDatetimeAndTextLenght.cs" />
     <Compile Remove="Migrations\20181123032237_ReleaseDatetimeAndTextLenght.Designer.cs" />
+    <Compile Remove="Migrations\20181126043537_FcmJustDeviceIDAsPK.cs" />
+    <Compile Remove="Migrations\20181126043537_FcmJustDeviceIDAsPK.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

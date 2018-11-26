@@ -9,11 +9,11 @@ namespace MAJServices.Entities
 {
     public class FirebaseCM
     {
-        //PK Compound PK defined in modelbuilder
+        [Required]
         [ForeignKey("UserId")]
         public string UserId { get; set; }
 
-        //PK Compound PK defined in modelbuilder
+        [Key]
         [MaxLength(250)]
         public string DeviceId { get; set; }
         

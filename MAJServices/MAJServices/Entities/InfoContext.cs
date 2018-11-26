@@ -9,7 +9,7 @@ namespace MAJServices.Entities
     public class InfoContext : IdentityDbContext<UserIdentity,RoleIdentity,string>
     {
         public InfoContext (DbContextOptions <InfoContext> options) :base (options){
-            //Database.Migrate();
+            Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,8 +17,8 @@ namespace MAJServices.Entities
             modelBuilder.Entity<UserIdentity>().HasMany(u => u.Posts).WithOne(p => p.Publisher)
                 .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<UserSubscription>().HasKey(k => new { k.UserId, k.DepartmentAcronym });
-            modelBuilder.Entity<FirebaseCM>().HasKey(k => new { k.UserId, k.DeviceId });
-            modelBuilder.Entity<FirebaseCM>().Property(k => k.DeviceId).ValueGeneratedNever();
+            //modelBuilder.Entity<FirebaseCM>().HasKey(k => new { k.UserId, k.DeviceId });
+            //modelBuilder.Entity<FirebaseCM>().Property(k => k.DeviceId).ValueGeneratedNever();
             //modelBuilder.Entity<Department>().HasMany(d => d.Members).WithOne(u => u.Department)
             //    .HasForeignKey(u => u.DepartmentAcronym);
             InfoContextSeeds.SeedData(modelBuilder);
