@@ -113,7 +113,7 @@ namespace MAJServices.Controllers
 //-------------------------patch a user's post-----------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPatch("{iduser}/post/{idpost}")]
-        public IActionResult PatchUserPost(string idUser , int idPost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
+        public async Task<IActionResult> PatchUserPostAsync(string idUser , int idPost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {
             if (!_postInfoRepository.PostExists(idUser,idPost))
             {
@@ -143,6 +143,7 @@ namespace MAJServices.Controllers
             {
                 return StatusCode(500, "A problem happened while handling your request");
             }
+            await PushNotification.SendPush(Mapper.Map<PostWithoutUserDto>(PostEntity), PostEntity.Department);
             return NoContent();
         }
 

@@ -9,7 +9,7 @@ namespace MAJServices.Entities
     public class InfoContext : IdentityDbContext<UserIdentity,RoleIdentity,string>
     {
         public InfoContext (DbContextOptions <InfoContext> options) :base (options){
-            Database.Migrate();
+            //Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

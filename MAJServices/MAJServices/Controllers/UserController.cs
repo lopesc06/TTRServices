@@ -123,45 +123,13 @@ namespace MAJServices.Controllers
             }
             return NoContent();
         }
-//------------------------------------Full update of user---------------------------------------//
-        //[HttpPut("userupdate/{id}")]
-        //public async Task<IActionResult> UserUpdateAsync(string id, [FromBody]UserForUpdateDto userUpdate)
-        //{
-        //    if (!_userInfoRepository.UserExists(id))
-        //    {
-        //        return NotFound();
-        //    }
-        //    if (!ModelState.IsValid || userUpdate == null)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    //if()
-
-        //    var UserEntity = _userInfoRepository.GetUser(id, false);
-        //    //if (UserEntity == null)
-        //    //{
-        //    //    return NotFound();
-        //    //}
-        //    Mapper.Map(userUpdate, UserEntity);
-        //    if (!_userInfoRepository.SaveUser())
-        //    {
-        //        return StatusCode(500, "A problem happened while handling your request");
-        //    }
-        //    var getCurrentRole = await _userManager.GetRolesAsync(UserEntity);
-        //    var removeCurrentRole = await _userManager.RemoveFromRoleAsync(UserEntity, getCurrentRole[0]);
-        //    var UpdateWithNewRole = await _userManager.AddToRoleAsync(UserEntity, userUpdate.Role);
-        //    if(!removeCurrentRole.Succeeded && !UpdateWithNewRole.Succeeded)
-        //    {
-        //        return StatusCode(500, "A problem happened while Updating User's Role request");
-        //    }
-        //    return NoContent();
-        //}
 
 //----------------------------------------Partial User Update----------------------------//
         [HttpPatch("userupdate/{id}")]
         public async Task<IActionResult> PartialUserUpdateAsync(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
         {
-            if (!_userInfoRepository.UserExists(id))
+            var UserEntity = _userInfoRepository.GetUser(id, false);
+            if (UserEntity == null)
             {
                 return NotFound("User's Id does not exist");
             }
@@ -169,8 +137,6 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var UserEntity = _userInfoRepository.GetUser(id, false);
             var UserToPatch = Mapper.Map<UserForUpdateDto>(UserEntity);
             userPatch.ApplyTo(UserToPatch, ModelState);
             if (!ModelState.IsValid)
@@ -182,6 +148,8 @@ namespace MAJServices.Controllers
             {
                 return BadRequest(ModelState);
             }
+            if (UserToPatch.Role.ToUpper() == "SUPERADMIN")
+                UserToPatch.DepartmentAcronym = "SUPERADMIN";
             Mapper.Map(UserToPatch, UserEntity);
             if (!_departmentInfoRepository.DepartmentExists(UserEntity.DepartmentAcronym) && UserEntity.DepartmentAcronym != null)
             {

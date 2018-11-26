@@ -33,7 +33,6 @@ namespace MAJServices
         {
             services.AddMvc();
             var connectionString = Environment.GetEnvironmentVariable("AzureDBString");
-            //var connectionString = Environment.GetEnvironmentVariable("LocalDB");
             //var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;";
             services.AddDbContext<InfoContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();

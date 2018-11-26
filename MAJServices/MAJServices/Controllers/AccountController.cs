@@ -51,6 +51,9 @@ namespace MAJServices.Controllers
 
             var CreateUserIdentity = Mapper.Map<UserIdentity>(userDto);
             CreateUserIdentity.UserName = CreateUserIdentity.Id;
+            if (userDto.Role.ToUpper() == "SUPERADMIN")
+                CreateUserIdentity.DepartmentAcronym = "SUPERADMIN";
+
             var result = await _userManager.CreateAsync(CreateUserIdentity, userDto.Password);
             if (result.Succeeded)
             {
