@@ -10,33 +10,41 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAJServices.Migrations
 {
     [DbContext(typeof(InfoContext))]
-    [Migration("20181002032711_Initial")]
-    partial class Initial
+    [Migration("20181113043445_FKPostswithUsersBugFix")]
+    partial class FKPostswithUsersBugFix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("MAJServices.Entities.Department", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasMaxLength(200);
-
-                    b.Property<string>("Acronym")
-                        .IsRequired()
+                    b.Property<string>("DepartmentAcronym")
                         .HasMaxLength(10);
 
                     b.Property<string>("DepartmentImageUrl");
 
                     b.Property<string>("HexColor");
 
-                    b.HasKey("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.HasKey("DepartmentAcronym");
 
                     b.ToTable("Departments");
+
+                    b.HasData(
+                        new { DepartmentAcronym = "CELEX", Name = "Centro de Lenguajes Extranjeras" },
+                        new { DepartmentAcronym = "CATT", Name = "Comisión Académica de Trabajos Terminales" },
+                        new { DepartmentAcronym = "GE", Name = "Gestión Escolar" },
+                        new { DepartmentAcronym = "UPIS", Name = "Unidad Politécnica de Integración Social" },
+                        new { DepartmentAcronym = "DEAE", Name = "Departamento de Extensión y Apoyos Educativos" }
+                    );
                 });
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
@@ -45,9 +53,13 @@ namespace MAJServices.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Path");
+                    b.Property<string>("FileName")
+                        .IsRequired();
 
-                    b.Property<int?>("PostId");
+                    b.Property<string>("Path")
+                        .IsRequired();
+
+                    b.Property<int>("PostId");
 
                     b.HasKey("Id");
 
@@ -56,15 +68,35 @@ namespace MAJServices.Migrations
                     b.ToTable("FilePaths");
                 });
 
+            modelBuilder.Entity("MAJServices.Entities.FirebaseCM", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(250);
+
+                    b.HasKey("UserId", "DeviceId");
+
+                    b.ToTable("FirebaseCMDevices");
+                });
+
             modelBuilder.Entity("MAJServices.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnName("DepartmentId");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(200);
+                        .HasMaxLength(250);
 
                     b.Property<DateTime>("EndDate");
 
@@ -75,9 +107,10 @@ namespace MAJServices.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(30);
+                        .HasMaxLength(50);
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -86,7 +119,38 @@ namespace MAJServices.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("MAJServices.Entities.User", b =>
+            modelBuilder.Entity("MAJServices.Entities.RoleIdentity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new { Id = "3013d880-2150-4efd-b7d0-3131d1cad731", ConcurrencyStamp = "be9444e2-c319-4a90-a910-8eafafa0bbaa", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
+                        new { Id = "676778a7-c8eb-4ebc-aca5-56d9f2d2d350", ConcurrencyStamp = "457b5047-e9a9-4fd4-b3d6-e974e9307115", Name = "Admin", NormalizedName = "ADMIN" },
+                        new { Id = "9cd5c1c1-a237-4bbe-905c-d86c3ec9cfff", ConcurrencyStamp = "1cf6ca6a-9281-4971-9ae9-b13630dbda92", Name = "Subadmin", NormalizedName = "SUBADMIN" },
+                        new { Id = "02d74195-e38d-4ce8-acb5-e20577af0499", ConcurrencyStamp = "4896ff55-2cac-4343-9740-7854fa08d413", Name = "General", NormalizedName = "GENERAL" }
+                    );
+                });
+
+            modelBuilder.Entity("MAJServices.Entities.UserIdentity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -96,7 +160,7 @@ namespace MAJServices.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("DepartmentId");
+                    b.Property<string>("DepartmentAcronym");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);
@@ -136,9 +200,11 @@ namespace MAJServices.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
+                    b.Property<bool>("isActive");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("DepartmentAcronym");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -149,30 +215,27 @@ namespace MAJServices.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "57de4908-2d7e-4bf4-9906-ce9810e400c3", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, SecurityStamp = "b651b24d-c769-4a45-9988-d8b1e150a6c2", TwoFactorEnabled = false, UserName = "2014630132", isActive = true },
+                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "3932ad86-94fd-49ea-9373-a43e3792faaa", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, SecurityStamp = "af07da05-7c00-4ccc-aae1-9a77cea78795", TwoFactorEnabled = false, UserName = "2014378223", isActive = true },
+                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "7390ecb1-056b-4eab-94aa-bb6aa2e38fef", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, SecurityStamp = "29be639c-a64c-4075-aa89-4601102348a4", TwoFactorEnabled = false, UserName = "2014631903", isActive = true },
+                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "166881bc-f0a4-461e-a86b-13d3ac45ca9a", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, SecurityStamp = "77bbb5e4-fe64-401e-808d-6639091e0547", TwoFactorEnabled = false, UserName = "2014193056", isActive = true }
+                    );
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("MAJServices.Entities.UserSubscription", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("UserId");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
+                    b.Property<string>("DepartmentAcronym")
+                        .HasColumnName("DepartmentId");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(256);
+                    b.HasKey("UserId", "DepartmentAcronym");
 
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256);
+                    b.HasIndex("DepartmentAcronym");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -263,28 +326,51 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("MAJServices.Entities.FilePath", b =>
                 {
-                    b.HasOne("MAJServices.Entities.Post")
+                    b.HasOne("MAJServices.Entities.Post", "Post")
                         .WithMany("FilePaths")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MAJServices.Entities.FirebaseCM", b =>
+                {
+                    b.HasOne("MAJServices.Entities.UserIdentity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MAJServices.Entities.Post", b =>
                 {
-                    b.HasOne("MAJServices.Entities.User", "User")
+                    b.HasOne("MAJServices.Entities.UserIdentity", "Publisher")
                         .WithMany("Posts")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("MAJServices.Entities.User", b =>
+            modelBuilder.Entity("MAJServices.Entities.UserIdentity", b =>
                 {
                     b.HasOne("MAJServices.Entities.Department", "Department")
                         .WithMany("Members")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentAcronym");
+                });
+
+            modelBuilder.Entity("MAJServices.Entities.UserSubscription", b =>
+                {
+                    b.HasOne("MAJServices.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentAcronym")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MAJServices.Entities.UserIdentity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
+                    b.HasOne("MAJServices.Entities.RoleIdentity")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -292,7 +378,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MAJServices.Entities.User")
+                    b.HasOne("MAJServices.Entities.UserIdentity")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -300,7 +386,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MAJServices.Entities.User")
+                    b.HasOne("MAJServices.Entities.UserIdentity")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -308,12 +394,12 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
+                    b.HasOne("MAJServices.Entities.RoleIdentity")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MAJServices.Entities.User")
+                    b.HasOne("MAJServices.Entities.UserIdentity")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -321,7 +407,7 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MAJServices.Entities.User")
+                    b.HasOne("MAJServices.Entities.UserIdentity")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

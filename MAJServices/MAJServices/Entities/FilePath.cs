@@ -13,7 +13,15 @@ namespace MAJServices.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Required]
+        public string FileName { get; set; }
+
+        [Required]
         public string Path { get; set; }
 
+        [ForeignKey("PostId")]
+        public Post Post { get; set; }
+        [Required]
+        public int PostId { get; set; }
     }
 }

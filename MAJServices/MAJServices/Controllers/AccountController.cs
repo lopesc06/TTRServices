@@ -2,12 +2,15 @@
 using MAJServices.Entities;
 using MAJServices.Models;
 using MAJServices.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,27 +34,34 @@ namespace MAJServices.Controllers
             this._configuration = configuration;
         }
 
-//----------------------------Add a new user and return token--------------------------------------------//
+//--------------------------------------Add a new user --------------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserForCreationDto userDto)
         {
-            if (userDto == null)
-            {
-                return BadRequest();
-            }
-            if (!ModelState.IsValid)
+            if (userDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var CreateUser = Mapper.Map<Entities.UserIdentity>(userDto);
-            CreateUser.UserName = CreateUser.Id;
-            var result = await _userManager.CreateAsync(CreateUser, userDto.Password);
+            var IdIsInUse = await _userManager.FindByIdAsync(userDto.Id);
+            if (IdIsInUse != null)
+            {
+                return StatusCode(409, "UserId is already in use");
+            }
+
+            var CreateUserIdentity = Mapper.Map<UserIdentity>(userDto);
+            CreateUserIdentity.UserName = CreateUserIdentity.Id;
+            if (userDto.Role.ToUpper() == "SUPERADMIN")
+                CreateUserIdentity.DepartmentAcronym = "SUPERADMIN";
+
+            var result = await _userManager.CreateAsync(CreateUserIdentity, userDto.Password);
             if (result.Succeeded)
             {
-                await AddUserRole(CreateUser, userDto.Role);
-                var UserResultDto = Mapper.Map<UserDto>(CreateUser);
-                return CreatedAtRoute("{idUser}", new { idUser = UserResultDto.Id}, UserResultDto);
-                //return BuildToken(CreateUser, userDto.Role);
+                await AddUserRole(CreateUserIdentity, userDto.Role);
+                var UserResultDto = Mapper.Map<UserDto>(CreateUserIdentity);
+                var roles = await _userManager.GetRolesAsync(CreateUserIdentity);
+                UserResultDto.Role = roles.Count>0 ? roles.First():null;
+                return CreatedAtRoute("GetUser", new { id = UserResultDto.Id}, UserResultDto);
             }
             else
             {
@@ -61,11 +71,13 @@ namespace MAJServices.Controllers
 //----------------------------------Build Token For User---------------------------------------//
         private IActionResult BuildToken(UserIdentity userInfo, string role)
         {
+            var memberOf = userInfo.DepartmentAcronym ?? "None";
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Id),
                 new Claim(JwtRegisteredClaimNames.FamilyName, userInfo.LastName),
                 new Claim("name",userInfo.Name),
+                new Claim("department",memberOf),
                 new Claim("roles",role),
                 new Claim("username",userInfo.Id),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
@@ -86,20 +98,22 @@ namespace MAJServices.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration
+                expiration,
+                departmet = memberOf,
+                role
             });
 
         }
 //--------------------------------Add User Role----------------------------------------------------------//
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         public async Task<IActionResult> AddUserRole(UserIdentity user, string role) {
             bool RoleExists = await _roleManager.RoleExistsAsync(role);
-            if (!RoleExists)
-            {
-                role = "General";
-            }
+            role = RoleExists ? role : "General";
             bool UserHasRole = await _userManager.IsInRoleAsync(user, role);
             if (!UserHasRole)
             {
+                var UserRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user,UserRoles);
                 var result = await _userManager.AddToRoleAsync(user, role);
                 if (result.Succeeded)
                     return Ok();
@@ -124,14 +138,14 @@ namespace MAJServices.Controllers
                 {
                     var user = await _userManager.FindByIdAsync(userLogin.Username);
                     var role = await _userManager.GetRolesAsync(user);
-                    if (user == null && role == null)
+                    if (user == null && role.Count > 0)
                         return NoContent();
                     else
-                        return BuildToken(user,role[0]);
+                        return BuildToken(user,role.First());
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError("Login Failure", "Invalid login attempt.");
                     return BadRequest(ModelState);
                 }
             }

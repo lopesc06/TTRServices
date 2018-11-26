@@ -1,19 +1,17 @@
 ﻿<Properties StartupConfiguration="{5A383D5B-E19F-449A-9128-22BFFE6E8D22}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="MAJServices/Controllers/UserController.cs">
     <Files>
-      <File FileName="MAJServices/Entities/Department.cs" Line="24" Column="41" />
-      <File FileName="MAJServices/Services/DepartmentInfoRepository.cs" Line="9" Column="42" />
-      <File FileName="MAJServices/Controllers/UserController.cs" Line="47" Column="52" />
-      <File FileName="MAJServices/Controllers/PostController.cs" Line="16" Column="9" />
-      <File FileName="MAJServices/Models/UserForUpdateDto.cs" Line="10" Column="41" />
-      <File FileName="MAJServices/Entities/InfoContext.cs" Line="1" Column="1" />
-      <File FileName="MAJServices/Entities/User.cs" Line="31" Column="38" />
-      <File FileName="MAJServices/Services/IUserInfoRepository.cs" Line="14" Column="45" />
+      <File FileName="MAJServices/Controllers/UserController.cs" Line="70" Column="53" />
+      <File FileName="MAJServices/Services/Interfaces/IUserInfoRepository.cs" Line="16" Column="39" />
+      <File FileName="MAJServices/Services/InterfacesImplementation/UserInfoRepository.cs" Line="63" Column="98" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/Controllers/AccountController.cs" relfile="MAJServices/Controllers/AccountController.cs" line="167" column="1" />
+      <Breakpoint file="/Users/javiercruzsantiago/Desktop/TTRServices/MAJServices/MAJServices/Controllers/FileController.cs" relfile="MAJServices/Controllers/FileController.cs" line="71" column="23" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.MAJServices PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

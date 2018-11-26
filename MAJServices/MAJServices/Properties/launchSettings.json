@@ -13,7 +13,11 @@
       "launchBrowser": true,
       "environmentVariables": {
         "JwtAudience": "ESCOM-IPN",
-        "AzureDBString": "@\"Server=tcp:majdbserver.database.windows.net,1433;Initial Catalog=MAJDB;Persist Security Info=False;User ID=ArturoEscutia;Password=Lopesc_06;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;\";",
+        "FirebaseServerKey": "AAAAI1wWkFo:APA91bHSlnEJjPfXcXmUavYX1jbKFSrWLjxLrIcX8mqBjy9mJ5FWEPAE42lIAUepVaFulESi1Yc6kns7wcX8BudjzfxviLaZdCyMGXZCRKSaGl8OVGGRbUzccBU0tiQsf1FxiNPT869b",
+        "AzureDBString": "Server=tcp:ttrmajdbserver.database.windows.net,1433;Initial Catalog=TTRMAJDBTest;Persist Security Info=False;User ID=ArturoEscutia;Password=Lopesc_06;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "LocalDB": "Server=(localdb)\\MSSQLLocalDB;Database=CityInfoDB;Trusted_Connection=True;",
+        "FirebaseSenderID": "151868837978",
+        "AzureBlobStorage": "DefaultEndpointsProtocol=https;AccountName=arturoescutia;AccountKey=NWmqwxcHdm4bZsEcTSMioomLXEDmd7tYD5TIwIcG1OV5FO4eId3gPclgv5I7mBXKVXs12iBCiImruQYTggJyeg==;EndpointSuffix=core.windows.net",
         "JwtIssuer": "TTMAJ2018",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "Llave_secreta": "AIWPEORKTMCIAPERMTMAKÑFLFISMAIRIRPAKVMNXCUQASDKQNBRQIIAKAS"

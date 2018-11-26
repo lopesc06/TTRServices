@@ -5,20 +5,19 @@ namespace MAJServices.Models
     public class UserForUpdateDto
     {
         [Required(ErrorMessage ="This field should not be empty")]
-        [MaxLength(30)]
-        [ConcurrencyCheck]
+        [StringLength(30)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "This field should not be empty")]
-        [MaxLength(40)]
-        [ConcurrencyCheck]
+        [StringLength(40)]
         public string LastName { get; set; }
 
         [StringLength(35)]
         [EmailAddress]
         public string Email { get; set; }
 
-        //[Required(ErrorMessage = "This field should not be empty")]
-        public string Role { get; set; }
+        public string Role { get; set; } = "";
+
+        public string DepartmentAcronym { get; set; }
     }
 }

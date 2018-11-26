@@ -1,5 +1,6 @@
 ﻿using MAJServices.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,32 +8,34 @@ using System.Threading.Tasks;
 
 namespace MAJServices.Seeds
 {
-    public class MyIdentityDataInitializer
+    [Route("api/seed")]
+    public class MyIdentityDataInitializer : Controller
     {
-        public static void SeedData(UserManager<UserIdentity> userManager, RoleManager<RoleIdentity> roleManager)
-        {
-            seedUsersAsync(userManager);
-            SeedRolesAsync(roleManager);
+
+        private readonly UserManager<UserIdentity> _userManager;
+        public MyIdentityDataInitializer(UserManager<UserIdentity> userManager){
+            _userManager = userManager;
         }
 
-        private static void seedUsersAsync(UserManager<UserIdentity> userManager)
+        [HttpGet("roles")]
+        public async Task<IActionResult> SeedUsers()
         {
-            
-        }
-
-        public static async void SeedRolesAsync(RoleManager<RoleIdentity> roleManager)
-        {
-            List<string> RolesList = new List<string>(new string[] { "SuperAdmin", "Admin", "Subadmin", "General" });
-            foreach (string r in RolesList)
-            {
-                bool x = await roleManager.RoleExistsAsync(r);
-                if (!x)
-                {
-                    //var role = new IdentityRole();
-                    //role.Name = r;
-                    var result =await roleManager.CreateAsync(new RoleIdentity { Name = r });
+            List<string> idUsers = new List<string>() { "2014630132", "2014378223","2014631903","2014193056" };
+                
+            foreach(string idUser in idUsers){
+                var user = await _userManager.FindByIdAsync(idUser);
+                var isInRole = await _userManager.GetRolesAsync(user);
+                if(isInRole.Count == 0){
+                    await _userManager.AddToRoleAsync(user, "Admin");
+                    var hasPassword = await _userManager.HasPasswordAsync(user);
+                    if(!hasPassword){
+                        await _userManager.AddPasswordAsync(user, "Rgibanez+370dxz");
+                    }
                 }
             }
+            return NoContent();
         }
+
+
     }
 }

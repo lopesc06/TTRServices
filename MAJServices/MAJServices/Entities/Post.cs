@@ -12,11 +12,11 @@ namespace MAJServices.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(150)]
         public string Title { get; set; }
 
         [Required]
-        [Column(TypeName = "Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
 
         [Required]
@@ -27,13 +27,19 @@ namespace MAJServices.Entities
         public DateTime EndDate { get; set; }
 
         [Required]
-        [MaxLength(200)]
+        [MaxLength(2000)]
         public string Description { get; set; }
 
-        public ICollection<FilePath> FilePaths { get; set; }
+        public ICollection<FilePath> FilePaths { get; set; } = new List<FilePath>();
+
+        [Required]
+        [ForeignKey("DepartmentAcronym")]
+        [Column("DepartmentId")]
+        public string Department { get; set; }
 
         [ForeignKey("UserId")]
-        public UserIdentity User { get; set; }
+        public UserIdentity Publisher { get; set; }
+        [Required]
         public string UserId { get; set; }
 
     }

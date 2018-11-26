@@ -8,16 +8,16 @@ namespace MAJServices.Entities
     public class Department
     {
         [Key]
-        [MaxLength(200)]
+        [MaxLength(10)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string Name{ get; set; }
-
+        public string DepartmentAcronym { get; set; }
+        
         [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", ErrorMessage = "Color Format Must Be Hexadecimal #")]
         public string HexColor { get; set; }
 
         [Required]
-        [MaxLength(10)]
-        public string Acronym { get; set; }
+        [MaxLength(200)]
+        public string Name { get; set; }
 
         public string DepartmentImageUrl { get; set; }
 

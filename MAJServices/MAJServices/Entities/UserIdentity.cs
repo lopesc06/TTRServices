@@ -19,11 +19,13 @@ namespace MAJServices.Entities
 
         public string UserImageUrl { get; set; }
 
+        public bool isActive { get; set; } = true;
+
         public ICollection<Post> Posts { get; set; } = new List<Post>();
 
-        [ForeignKey("DepartmentId")]
+        [ForeignKey("DepartmentAcronym")]
         public Department Department { get; set; }
-        public string DepartmentId { get; set; }
+        public string DepartmentAcronym { get; set; }
     }
 }
 
