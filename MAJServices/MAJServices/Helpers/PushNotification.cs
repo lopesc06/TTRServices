@@ -33,6 +33,11 @@ namespace MAJServices.Helpers
                         body = post.Description,
                         title = department + ":" + post.Title
                     },
+                    data = new
+                    {
+                        department = department.ToUpper(),
+                        trigger = "posting"
+                    },
                     priority = "normal"
                 };
                 var json = JsonConvert.SerializeObject(FcmMessage);

@@ -4,6 +4,8 @@ using MAJServices.Models;
 using MAJServices.Models.FirebaseCM;
 using MAJServices.Services;
 using MAJServices.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -25,9 +27,11 @@ namespace MAJServices.Controllers
             _firebaseInfoRepository = firebaseInfoRepository;
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("fcm/sendpush")]
         public async Task SendPushNotification([FromBody]IEnumerable<NotificationForCreationDto> notifications)
         {
+            var publisher = User.FindFirst("department").Value.ToUpper();
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
             string message = "", title= "";
@@ -55,6 +59,10 @@ namespace MAJServices.Controllers
                         {
                             body = message,
                             title
+                        },
+                        data = new {
+                            department = publisher,
+                            trigger = "notifyuser"
                         },
                         priority = "high"
                     };
