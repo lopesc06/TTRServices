@@ -27,12 +27,13 @@ namespace MAJServices.Controllers
         private readonly IUserInfoRepository _userInfoRepository;
 
         public AccountController(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager,
-            IConfiguration configuration, RoleManager<RoleIdentity> roleManager)
+            IConfiguration configuration, RoleManager<RoleIdentity> roleManager, IUserInfoRepository userInfoRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             this._configuration = configuration;
+            _userInfoRepository = userInfoRepository;
         }
 
 //--------------------------------------Add a new user --------------------------------------------//

@@ -98,7 +98,7 @@ namespace MAJServices.Controllers
             return CreatedAtRoute("GetUserPost", new { idUser, idPost },Mapper.Map<PostWithoutUserDto>(postEntity));
         }
 
-        //---------------------------Upload User's Profile Image into blob storage------------------------------------//
+//---------------------------Upload User's Profile Image into blob storage------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpPost("{iduser}/Image")]
         public async Task<IActionResult> SaveProfileImage(string iduser,IFormFile file)

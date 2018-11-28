@@ -22,6 +22,8 @@ namespace MAJServices.Controllers
             _departmentInfoRepository = departmentInfoRepository;
         }
 
+
+//---------------------------------------Add user subscription to DB---------------------------------------//
         [HttpPost("{iduser}/subscriptions")]
         public IActionResult AddUserSubscriptions(string iduser, [FromBody]IEnumerable<UserSubscriptionDto> subscriptionsDto)
         {
@@ -51,6 +53,8 @@ namespace MAJServices.Controllers
             return Ok(subscriptionsNotInDb);
         }
 
+
+//--------------------------------------Get user subscription from DB---------------------------------------//
         [HttpGet("{iduser}/subscriptions")]
         public IActionResult GetUserSubscriptions(string iduser)
         {
@@ -63,6 +67,8 @@ namespace MAJServices.Controllers
             return Ok(subscriptionsDto);
         }
 
+
+//------------------------------------Delete from DB those departments where user had unsubscribe---------------------------//
         [HttpDelete("{iduser}/subscriptions")]
         public IActionResult DeleteUserSubscriptions(string iduser, [FromBody]IEnumerable<UserSubscriptionDto> subscriptionsDto)
         {

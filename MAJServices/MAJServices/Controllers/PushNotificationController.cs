@@ -78,6 +78,7 @@ namespace MAJServices.Controllers
             }
         }
 
+
         [HttpPost("fcm/token")]
         public IActionResult AddTokenToDevice([FromBody]FirebaseCMForCreationDto FCMForCreationDto)
         {
@@ -106,6 +107,44 @@ namespace MAJServices.Controllers
             _firebaseInfoRepository.SaveToken();
             return Ok();
         }
+
+
+
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
+        [HttpGet("test")]
+        public async Task Test()
+        {
+            var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
+            var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
+            List<string> usersId = new List<string>();
+            using (var client = new HttpClient())
+            {
+                //do something with http client
+                client.BaseAddress = new Uri("https://fcm.googleapis.com");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={applicationID}");
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={senderId}");
+                var FCMMessage = new
+                    {
+                        to = "/topics/DEAE",
+                        data = new
+                        {
+                            body = "test con data",
+                            title = "Titulo test con data",
+                            department = "DEAE",
+                            trigger = "notifyuser"
+                        },
+                        priority = "high"
+                    };
+                    var json = JsonConvert.SerializeObject(FCMMessage);
+                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                    await client.PostAsync("/fcm/send", httpContent);
+            }
+
+        }
+
+
 
     }
 }
