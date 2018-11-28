@@ -76,7 +76,7 @@ namespace MAJServices.Services
 
         public bool UserExists(string Id)
         {
-            return _infoContext.Users.Any(u => u.Id == Id);
+            return _infoContext.Users.Any(u => u.Id == Id && u.isActive == true);
         }
         
     }

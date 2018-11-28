@@ -31,6 +31,11 @@ namespace MAJServices.Controllers
         [HttpPost("fcm/sendpush")]
         public async Task SendPushNotification([FromBody]IEnumerable<NotificationForCreationDto> notifications)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_firebaseInfoRepository.UserExists(userId))
+            {
+                return;
+            }
             var publisher = User.FindFirst("department").Value.ToUpper();
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");

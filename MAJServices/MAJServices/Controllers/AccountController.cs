@@ -24,6 +24,7 @@ namespace MAJServices.Controllers
         private readonly RoleManager<RoleIdentity> _roleManager;
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserInfoRepository _userInfoRepository;
 
         public AccountController(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager,
             IConfiguration configuration, RoleManager<RoleIdentity> roleManager)
@@ -39,6 +40,11 @@ namespace MAJServices.Controllers
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserForCreationDto userDto)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             if (userDto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -107,6 +113,11 @@ namespace MAJServices.Controllers
 //--------------------------------Add User Role----------------------------------------------------------//
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "ElevatedPrivilages")]
         public async Task<IActionResult> AddUserRole(UserIdentity user, string role) {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             bool RoleExists = await _roleManager.RoleExistsAsync(role);
             role = RoleExists ? role : "General";
             bool UserHasRole = await _userManager.IsInRoleAsync(user, role);

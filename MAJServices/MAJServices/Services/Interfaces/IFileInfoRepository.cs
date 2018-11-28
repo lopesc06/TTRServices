@@ -12,6 +12,7 @@ namespace MAJServices.Services.Interfaces
         void AddFileToUser(FilePath file);
         bool SaveFile();
         Post RetrievePost(int idPost);
+        bool UserExists(string id);
         UserIdentity RetrieveUser(string idUser);
         void ClearPreviousFiles(int idPost);
     }

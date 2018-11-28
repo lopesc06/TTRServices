@@ -30,6 +30,11 @@ namespace MAJServices.Controllers
         [HttpGet("post")]
         public IActionResult GetLastPosts(string dpt="")
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var recentPostsEntity = _postInfoRepository.GetRecentPosts(dpt);
             var postsDtoResult = Mapper.Map<List<PostDto>>(recentPostsEntity);
             foreach(PostDto postDto in postsDtoResult)
@@ -44,6 +49,11 @@ namespace MAJServices.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
         [HttpGet("{iduser}/post/{idPost}", Name ="GetUserPost")]
         public IActionResult GetUserPost(string idUser, int idPost){
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             if (!_postInfoRepository.PostExists(idUser, idPost))
             {
                 return NotFound();
@@ -62,6 +72,11 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/post")]
         public async Task<IActionResult> AddUserPostAsync(string idUser, [FromBody]PostForCreationDto postForCreationDto)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var publisher = _userInfoRepository.GetUser(idUser,false);
             if (publisher == null)
             {
@@ -93,6 +108,11 @@ namespace MAJServices.Controllers
         [HttpDelete("{iduser}/post/{idpost}")]
         public IActionResult DeleteUserPost(string idUser, int idPost)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             if (!_postInfoRepository.PostExists(idUser, idPost))
             {
                 return NotFound();
@@ -115,6 +135,11 @@ namespace MAJServices.Controllers
         [HttpPatch("{iduser}/post/{idpost}")]
         public async Task<IActionResult> PatchUserPostAsync(string idUser , int idPost , [FromBody]JsonPatchDocument<PostForUpdateDto> postPatch) 
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             if (!_postInfoRepository.PostExists(idUser,idPost))
             {
                 return NotFound();

@@ -85,19 +85,6 @@ namespace MAJServices.Controllers
                 return StatusCode(500, "A problem happened while handling your request");
             }
             return NoContent();
-            
-            //var subscriptionsInDb = _userInfoRepository.GetUserSubscription(iduser);
-            //var subscriptionsEntity = Mapper.Map<IEnumerable<UserSubscription>>(subscriptionsDto);
-            //var subscriptionsToRemove = subscriptionsEntity
-            //    .Where(s => subscriptionsInDb.Select(q => q.DepartmentAcronym.ToUpper()).Contains(s.DepartmentAcronym.ToUpper()));
-            //foreach (UserSubscription subscription in subscriptionsToRemove)
-            //{
-            //    _userInfoRepository.DeleteUserSubscription(subscription);
-            //}
-            //if (!_userInfoRepository.SaveUser())
-            //{
-            //    return StatusCode(500, "A problem happened while handling your request");
-            //}
         }
 
     }

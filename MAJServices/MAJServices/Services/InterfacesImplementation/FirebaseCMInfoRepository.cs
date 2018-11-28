@@ -39,7 +39,7 @@ namespace MAJServices.Services.InterfacesImplementation
 
         public bool UserExists(string userId)
         {
-            return _infoContext.Users.Any(u => u.Id == userId);
+            return _infoContext.Users.Any(u => u.Id == userId && u.isActive == true);
         }
     }
 }

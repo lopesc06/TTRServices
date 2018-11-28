@@ -32,6 +32,11 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/post/{idPost}/files")]
         public async Task<IActionResult> SavePostsFile(string idUser,int idPost,IEnumerable<IFormFile> files)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_fileInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var postEntity = _fileInfoRepository.RetrievePost(idPost);
             if (postEntity == null )
             {
@@ -98,6 +103,11 @@ namespace MAJServices.Controllers
         [HttpPost("{iduser}/Image")]
         public async Task<IActionResult> SaveProfileImage(string iduser,IFormFile file)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_fileInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var userEntity = _fileInfoRepository.RetrieveUser(iduser);
             if(userEntity == null)
             {
