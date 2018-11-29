@@ -57,7 +57,7 @@ namespace MAJServices.Controllers
                 var userDevices = _firebaseInfoRepository.GetUserTokensDevices(usersId);
                 foreach (string Token in userDevices)
                 {
-                    var data = new
+                    var FCMMessage = new
                     {
                         to = Token,
                         notification = new
@@ -66,13 +66,32 @@ namespace MAJServices.Controllers
                             title
                         },
                         data = new {
+                            notif_body = message,
+                            notif_title = title,
+                            type = "notification",
                             department = publisher,
                             trigger = "notifyuser"
                         },
                         priority = "high"
                     };
-                    var json = JsonConvert.SerializeObject(data);
-                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                    var FCMMessage2 = new
+                    {
+                        to = Token,
+                        data = new
+                        {
+                            notif_body = message,
+                            notif_title = title,
+                            type = "data",
+                            department = publisher,
+                            trigger = "notifyuser"
+                        },
+                        priority = "high"
+                    };
+                    var json1 = JsonConvert.SerializeObject(FCMMessage);
+                    var json2 = JsonConvert.SerializeObject(FCMMessage2);
+                    var httpContent = new StringContent(json1, Encoding.UTF8, "application/json");
+                    await client.PostAsync("/fcm/send", httpContent);
+                    httpContent = new StringContent(json2, Encoding.UTF8, "application/json");
                     await client.PostAsync("/fcm/send", httpContent);
                 }
             }
@@ -107,44 +126,6 @@ namespace MAJServices.Controllers
             _firebaseInfoRepository.SaveToken();
             return Ok();
         }
-
-
-
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Publishers")]
-        [HttpGet("test")]
-        public async Task Test()
-        {
-            var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
-            var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
-            List<string> usersId = new List<string>();
-            using (var client = new HttpClient())
-            {
-                //do something with http client
-                client.BaseAddress = new Uri("https://fcm.googleapis.com");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={applicationID}");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={senderId}");
-                var FCMMessage = new
-                    {
-                        to = "/topics/DEAE",
-                        data = new
-                        {
-                            body = "test con data",
-                            title = "Titulo test con data",
-                            department = "DEAE",
-                            trigger = "notifyuser"
-                        },
-                        priority = "high"
-                    };
-                    var json = JsonConvert.SerializeObject(FCMMessage);
-                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                    await client.PostAsync("/fcm/send", httpContent);
-            }
-
-        }
-
-
 
     }
 }
