@@ -106,7 +106,6 @@ C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\bin\Debug\ne
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csproj.CoreCompileInputs.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.RazorAssemblyInfo.cs
-C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfoInputs.cache
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.AssemblyInfo.cs
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.TagHelpers.input.cache
@@ -129,3 +128,4 @@ C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\ne
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.pdb
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csproj.CopyComplete
 C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\MAJServices.csprojAssemblyReference.cache
+C:\Users\Arturo Escutia\Desktop\TTRServices\MAJServices\MAJServices\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
