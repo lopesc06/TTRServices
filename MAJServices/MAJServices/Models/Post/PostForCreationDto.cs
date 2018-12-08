@@ -9,7 +9,7 @@ namespace MAJServices.Models
     public class PostForCreationDto
     {
         [Required]
-        [MaxLength(30)]
+        [StringLength(150)]
         public string Title { get; set; }
 
         [Required]
@@ -24,7 +24,7 @@ namespace MAJServices.Models
         public DateTime EndDate { get; set; }
 
         [Required]
-        [MaxLength(2000)]
+        [StringLength(2000)]
         public string Description { get; set; }
     }
 }

@@ -69,16 +69,20 @@ namespace MAJServices.Migrations
 
             modelBuilder.Entity("MAJServices.Entities.FirebaseCM", b =>
                 {
-                    b.Property<string>("UserId");
-
                     b.Property<string>("DeviceId")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250);
 
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(250);
 
-                    b.HasKey("UserId", "DeviceId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
+
+                    b.HasKey("DeviceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FirebaseCMDevices");
                 });
@@ -141,10 +145,10 @@ namespace MAJServices.Migrations
                     b.ToTable("AspNetRoles");
 
                     b.HasData(
-                        new { Id = "5148956a-dea4-4a80-9e97-3a1593a50490", ConcurrencyStamp = "42e584f8-dfc2-4892-a76f-9b2a206bae8c", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
-                        new { Id = "293431a3-d2ed-4769-9130-2b9d4b867870", ConcurrencyStamp = "1fdcd961-20ae-45b9-8888-ac82fc866a78", Name = "Admin", NormalizedName = "ADMIN" },
-                        new { Id = "2a41358d-45a0-4ab3-a7bb-269dc9da891d", ConcurrencyStamp = "dcec9474-008a-4b56-b198-dd82b12fb51e", Name = "Subadmin", NormalizedName = "SUBADMIN" },
-                        new { Id = "5902392a-ed35-448b-8b25-b0d68d4f0e41", ConcurrencyStamp = "adb42b3e-3e9f-4f79-9eda-be71c32bebb2", Name = "General", NormalizedName = "GENERAL" }
+                        new { Id = "86f4a4b0-98d3-4467-b0fb-059909930eee", ConcurrencyStamp = "9686ea42-efd3-4274-9903-c5460811fb2d", Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
+                        new { Id = "f9119eaa-6cd9-4a91-afd3-464eb96303c3", ConcurrencyStamp = "a6c5cb43-7398-4f68-b285-3a4f785dc3e5", Name = "Admin", NormalizedName = "ADMIN" },
+                        new { Id = "e3a0d9b7-2216-4925-9262-82dfe400feef", ConcurrencyStamp = "e23fa376-176e-45ed-8174-e21c6b2e0d07", Name = "Subadmin", NormalizedName = "SUBADMIN" },
+                        new { Id = "0e6ee6dc-af85-4e8c-9a40-7090eb80aa70", ConcurrencyStamp = "64e944f4-5d4a-4d9f-9ab7-eaeacdb2f7a2", Name = "General", NormalizedName = "GENERAL" }
                     );
                 });
 
@@ -215,10 +219,10 @@ namespace MAJServices.Migrations
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
-                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "cec2df94-6cf8-4d9e-83cd-ca2996fbb277", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, SecurityStamp = "6b8b1477-1683-4e72-8867-ef6de1bcbeed", TwoFactorEnabled = false, UserName = "2014630132", isActive = true },
-                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "9206fadf-8cf9-49ad-bc68-50db46ed371b", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, SecurityStamp = "ed23364b-29d5-4429-9805-92f516839baa", TwoFactorEnabled = false, UserName = "2014378223", isActive = true },
-                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "9e77bacb-cba7-4de3-b3b2-27a3993e4672", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, SecurityStamp = "1587ce14-2283-4475-ad0f-af9ea6846395", TwoFactorEnabled = false, UserName = "2014631903", isActive = true },
-                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "da10a386-b69c-421c-ac49-e1c2223030e9", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, SecurityStamp = "2ac1a471-d4f1-4c7a-a9b4-477e11258c65", TwoFactorEnabled = false, UserName = "2014193056", isActive = true }
+                        new { Id = "2014630132", AccessFailedCount = 0, ConcurrencyStamp = "db8ce6d4-cdbe-4b80-8936-be6dc1e367f3", DepartmentAcronym = "CATT", EmailConfirmed = false, LastName = "Escutia López", LockoutEnabled = false, Name = "Arturo", NormalizedUserName = "2014630132", PhoneNumberConfirmed = false, SecurityStamp = "4b8376cf-6143-4c69-b4ad-366f5147c750", TwoFactorEnabled = false, UserName = "2014630132", isActive = true },
+                        new { Id = "2014378223", AccessFailedCount = 0, ConcurrencyStamp = "2812fbae-e89a-47a5-8156-8994e9d28132", DepartmentAcronym = "CELEX", EmailConfirmed = false, LastName = "Cruz Santiago", LockoutEnabled = false, Name = "Javier", NormalizedUserName = "2014378223", PhoneNumberConfirmed = false, SecurityStamp = "14cf332e-e99d-4781-9242-ad8f6b9ee596", TwoFactorEnabled = false, UserName = "2014378223", isActive = true },
+                        new { Id = "2014631903", AccessFailedCount = 0, ConcurrencyStamp = "6b776258-0fc5-4d16-8ff1-8c678abcf862", DepartmentAcronym = "UPIS", EmailConfirmed = false, LastName = "Medina Zarazúa", LockoutEnabled = false, Name = "Miguel", NormalizedUserName = "2014631903", PhoneNumberConfirmed = false, SecurityStamp = "09bd4cd2-5e60-4803-a717-f8d68ecd36d0", TwoFactorEnabled = false, UserName = "2014631903", isActive = true },
+                        new { Id = "2014193056", AccessFailedCount = 0, ConcurrencyStamp = "da9e1b74-1823-48d4-b815-f727f54dc735", DepartmentAcronym = "GE", EmailConfirmed = false, LastName = "Servantes Vargas", LockoutEnabled = false, Name = "Axel", NormalizedUserName = "2014193056", PhoneNumberConfirmed = false, SecurityStamp = "16db7e59-273b-4081-ad33-c4ed57922abc", TwoFactorEnabled = false, UserName = "2014193056", isActive = true }
                     );
                 });
 

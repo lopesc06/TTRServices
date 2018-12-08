@@ -17,7 +17,6 @@ namespace MAJServices.Helpers
             var applicationID = Environment.GetEnvironmentVariable("FirebaseServerKey");
             var senderId = Environment.GetEnvironmentVariable("FirebaseSenderID");
             var destination = "/topics/" + department.ToUpper();
-
             using (var client = new HttpClient())
             {
                 //do something with http client
@@ -33,11 +32,35 @@ namespace MAJServices.Helpers
                         body = post.Description,
                         title = department + ":" + post.Title
                     },
+                    data = new
+                    {
+                        notif_body = post.Description,
+                        notif_title = department + ":" + post.Title,
+                        type = "notification",
+                        department = department.ToUpper(),
+                        trigger = "posting"
+                    },
                     priority = "normal"
                 };
-                var json = JsonConvert.SerializeObject(FcmMessage);
-                var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync("/fcm/send", httpContent);
+                var FcmMessage2 = new
+                {
+                    to = destination,
+                    data = new
+                    {
+                        notif_body = post.Description,
+                        notif_title = department + ":" + post.Title,
+                        type = "data",
+                        department = department.ToUpper(),
+                        trigger = "posting"
+                    },
+                    priority = "normal"
+                };
+                var json1 = JsonConvert.SerializeObject(FcmMessage);
+                var json2 = JsonConvert.SerializeObject(FcmMessage2);
+                var httpContent = new StringContent(json1, Encoding.UTF8, "application/json");
+                await client.PostAsync("/fcm/send", httpContent);
+                httpContent = new StringContent(json2, Encoding.UTF8, "application/json");
+                await client.PostAsync("/fcm/send", httpContent);
             }
         }
     }

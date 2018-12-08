@@ -37,6 +37,11 @@ namespace MAJServices.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetUsersAsync(bool includePosts = false)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             bool isSuperadmin = User.FindFirst("department").Value.ToUpperInvariant().Equals("SUPERADMIN");
             var department = isSuperadmin ? "" : User.FindFirst("department").Value;
             var usersEntity = _userInfoRepository.GetUsers(includePosts, department);
@@ -81,6 +86,11 @@ namespace MAJServices.Controllers
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUserAsync(string id, bool includePosts = false)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var user = _userInfoRepository.GetUser(id, includePosts);
             if (user == null)
                 return NotFound();
@@ -106,6 +116,11 @@ namespace MAJServices.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(string id)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             if (!_userInfoRepository.UserExists(id))
             {
                 return NotFound();
@@ -128,6 +143,11 @@ namespace MAJServices.Controllers
         [HttpPatch("userupdate/{id}")]
         public async Task<IActionResult> PartialUserUpdateAsync(string id, [FromBody]JsonPatchDocument<UserForUpdateDto> userPatch)
         {
+            var userId = User.FindFirst("username").Value;
+            if (!_userInfoRepository.UserExists(userId))
+            {
+                return NotFound("Usuario Deshabilitado");
+            }
             var UserEntity = _userInfoRepository.GetUser(id, false);
             if (UserEntity == null)
             {

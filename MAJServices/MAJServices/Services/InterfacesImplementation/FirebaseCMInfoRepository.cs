@@ -21,10 +21,15 @@ namespace MAJServices.Services.InterfacesImplementation
             _infoContext.FirebaseCMDevices.Add(userDevice);
         }
 
-        public FirebaseCM GetUserDevice(string userId, string deviceId)
+        public FirebaseCM GetUserDevice(string deviceId)
         {
             return _infoContext.FirebaseCMDevices
-                .Where(fcm => fcm.UserId == userId && fcm.DeviceId == deviceId).FirstOrDefault();
+                .Where(fcm => fcm.DeviceId == deviceId).FirstOrDefault();
+        }
+
+        public IEnumerable<string> GetUserTokensDevices(List<string> usersId)
+        {
+            return _infoContext.FirebaseCMDevices.Where(fcm => usersId.Contains(fcm.UserId)).Select(fcm => fcm.Token).ToList();
         }
 
         public bool SaveToken()
@@ -34,7 +39,7 @@ namespace MAJServices.Services.InterfacesImplementation
 
         public bool UserExists(string userId)
         {
-            return _infoContext.Users.Any(u => u.Id == userId);
+            return _infoContext.Users.Any(u => u.Id == userId && u.isActive == true);
         }
     }
 }

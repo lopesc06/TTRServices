@@ -9,7 +9,8 @@ namespace MAJServices.Services.Interfaces
     public interface IFirebaseCMInfoRepository
     {
         bool UserExists(string userId);
-        FirebaseCM GetUserDevice(string userId, string deviceId);
+        FirebaseCM GetUserDevice(string deviceId);
+        IEnumerable<string> GetUserTokensDevices(List<string> usersId);
         void AddTokenToDeviceId(FirebaseCM userDevice);
         bool SaveToken();
     }

@@ -42,6 +42,11 @@ namespace MAJServices.Services.InterfacesImplementation
             _infoContext.FilePaths.RemoveRange(filesToRemove);
         }
 
+        public bool UserExists(string Id)
+        {
+            return _infoContext.Users.Any(u => u.Id == Id && u.isActive == true);
+        }
+
         public void AddFileToUser(FilePath file)
         {
             throw new NotImplementedException();
